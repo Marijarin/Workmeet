@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "author": "И.Сверхпродуктивный",
+      "authorAvatar": "@drawable/avatar1",
+      "published": "21 мая в 18:36",
+      "attachment": "@sample/banner",
+      "content": "Привет, сегодня я хочу рассказать о моих сверхпродуктивных подходах к работе, как я убил прокрастинацию, апатию и другую вредную -ию.",
+      "authorJob": "Android developer",
+      "likes": "1",
+      "likeOwners": "@drawable/avatar2",
+      "coords": "",
+      "link": "https://about.google/"
+    }
+  ]
+}

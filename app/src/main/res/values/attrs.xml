@@ -1,0 +1,23 @@
+
+<resources>
+    <attr name="color66F3ED" format="color" />
+    <attr name="colorOn66F3ED" format="color" />
+    <attr name="color66F3EDContainer" format="color" />
+    <attr name="colorOn66F3EDContainer" format="color" />
+    <attr name="harmonize66F3ED" format="boolean" />
+    <attr name="color8b0000" format="color" />
+    <attr name="colorOn8b0000" format="color" />
+    <attr name="color8b0000Container" format="color" />
+    <attr name="colorOn8b0000Container" format="color" />
+    <attr name="harmonize8b0000" format="boolean" />
+    <attr name="colorFFB673" format="color" />
+    <attr name="colorOnFFB673" format="color" />
+    <attr name="colorFFB673Container" format="color" />
+    <attr name="colorOnFFB673Container" format="color" />
+    <attr name="harmonizeFFB673" format="boolean" />
+    <attr name="color00908c" format="color" />
+    <attr name="colorOn00908c" format="color" />
+    <attr name="color00908cContainer" format="color" />
+    <attr name="colorOn00908cContainer" format="color" />
+    <attr name="harmonize00908c" format="boolean" />
+</resources>

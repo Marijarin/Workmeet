@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "author": "И.Сверхпродуктивный",
+      "authorAvatar": "@drawable/avatar1",
+      "authorJob": "Android developer",
+      "dateTime": "10.05 10:00",
+      "published": "29 марта в 18:36",
+      "attachment": "@sample/banner",
+      "content": "Ежегодная конференция Google I/O в этом году начнётся 10 мая, сообщил в Twitter глава компании Google Сундар Пичаи (Sundar Pichai). В компании уточнили, что участие в конференции можно будет принять очно, но размер живой аудитории будет ограничен",
+      "type": "OFFLINE",
+      "coords": "",
+      "likes": "1",
+      "likeOwners": "@drawable/avatar3",
+      "speakers": "@drawable/avatar4",
+      "participants": "@drawable/avatar5",
+      "link": "https://about.google/"
+    }
+  ]
+}

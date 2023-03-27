@@ -1,0 +1,65 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.NewPostFragment">
+
+    <FrameLayout
+        android:id="@+id/photoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/md_theme_light_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/authWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/md_theme_light_secondaryContainer"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:src="@mipmap/ic_launcher_round"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/icon_button_min_size"
+                android:scaleType="center"
+                android:background="@color/md_theme_light_secondaryContainer"
+                android:contentDescription="@string/app_name" />
+
+            <EditText
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_large"
+                android:hint="@string/login"
+                />
+            <EditText
+                android:id="@+id/password"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_large"
+                android:fontFamily="sans-serif"
+                android:hint="@string/password"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/in"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/min_spacing"
+                android:layout_marginRight="@dimen/min_spacing"
+                android:layout_width="@dimen/icon_button_large_size"
+                android:contentDescription="@string/sign_in"
+                android:text="@string/sign_in"
+                android:textAllCaps="true"
+                android:textSize="@dimen/text_size_large"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

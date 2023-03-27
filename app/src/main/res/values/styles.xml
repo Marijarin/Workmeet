@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.AppTheme.Menu.Button" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/md_theme_light_primary</item>
+        <item name="android:textColor">@color/md_theme_light_shadow</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+    </style>
+    <style name="Widget.AppTheme.Button.Like" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/md_theme_light_error</item>
+        <item name="android:textColor">@color/md_theme_light_shadow</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+        <item name="android:paddingStart">@dimen/icon_button_padding</item>
+    </style>
+
+
+</resources>

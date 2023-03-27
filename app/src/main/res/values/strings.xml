@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name" translatable="false">Workmeet</string>
+    <string name="description_post_author_avatar">Post author avatar</string>
+    <string name="description_post_menu">Post menu</string>
+    <string name="post_text">Post Text</string>
+    <string name="post_attachment">Post Attachment</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_remove">Remove</string>
+    <string name="description_post_likes">Who liked the post</string>
+    <string name="description_owners_likes">Who liked the post</string>
+    <string name="speakers">Speakers</string>
+    <string name="participants">Participants</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_out">Sign out</string>
+    <string name="cancel">Not now</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="signed_out">You have signed out</string>
+    <string name="want_to_sign_in">I want to sign in</string>
+    <string name="want_to_sign_out">Confirm signing out</string>
+    <string name="warn_out">Only authorized users can post and like.</string>
+    <string name="not_confirmed">Passwords do not match!</string>
+    <string name="avatar">Click here to upload your avatar</string>
+    <string name="add_post">Add post</string>
+    <string name="retry_loading">Retry</string>
+    <string name="message">Write a message</string>
+    <string name="my_messages">My messages</string>
+    <string name="invite">Invite to event</string>
+    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
+    <string name="save">Save</string>
+</resources>
