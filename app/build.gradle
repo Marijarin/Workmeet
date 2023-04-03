@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace 'ru.netology.workmeet'
@@ -44,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:+'
     def core_version = "1.9.0"
     def appcompat_version = "1.5.1"
     def constraintlayout_version = "2.1.4"
@@ -98,9 +100,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttplogging_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
-    implementation"androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_lifecycle_version"
-    implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
-    implementation "com.github.dhaval2404:imagepicker-support:$imagepicker_support_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_lifecycle_version"
+
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"

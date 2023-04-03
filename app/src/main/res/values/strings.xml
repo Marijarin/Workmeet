@@ -32,4 +32,6 @@
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="error_loading">Something went wrong. Try again later</string>
     <string name="save">Save</string>
+    <string name="default_job">job is not defined</string>
+    <string name="like_owner_avatar">Like owner avatar</string>
 </resources>

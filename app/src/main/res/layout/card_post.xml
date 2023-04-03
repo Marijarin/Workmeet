@@ -103,6 +103,15 @@
         app:layout_constraintTop_toBottomOf="@id/content"
         tools:srcCompat="@sample/posts.json/data/attachment" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="content, attachment"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="96dp" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/like"
         android:layout_width="wrap_content"
@@ -110,20 +119,20 @@
         android:checkable="true"
         android:contentDescription="@string/description_post_likes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/attachment"
-        app:icon="@drawable/baseline_favorite_24"
+        app:layout_constraintTop_toBottomOf="@id/barrierBottom"
+        app:icon="@drawable/ic_like_24dp"
         tools:text="@sample/posts.json/data/likes"
         style="@style/Widget.AppTheme.Button.Like"
         />
-    <ImageView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/likeOwners"
-        android:layout_width="@dimen/icon_button_min_size"
-        android:layout_height="@dimen/icon_button_min_size"
-        android:contentDescription="@string/description_owners_likes"
-        app:layout_constraintTop_toBottomOf="@id/attachment"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/like"
-        tools:srcCompat="@sample/posts.json/data/likeOwners"
-        />
+        app:layout_constraintTop_toBottomOf="@id/barrierBottom"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/card_user_preview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -33,4 +33,6 @@
     <string name="message">Написать сообщение</string>
     <string name="my_messages">Мои сообщения</string>
     <string name="invite">Пригласить на событие</string>
+    <string name="default_job">работает неизвестно кем</string>
+    <string name="like_owner_avatar">Аватар лайкнувшего</string>
 </resources>

@@ -2,10 +2,27 @@ package ru.netology.workmeet.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.workmeet.dto.User
+import ru.netology.workmeet.dto.UserPreview
 
 @Entity
 data class UserPreviewEntity(
-    @PrimaryKey val userId:Long,
+    @PrimaryKey(autoGenerate = true)
+    val userId: Long,
     val name: String,
     val avatar: String,
-)
+) {
+    fun toDto() = UserPreview(
+        userId,
+        name,
+        avatar,
+    )
+    companion object {
+        fun fromDto(dto: UserPreview) =
+            UserPreviewEntity(
+                dto.userId,
+                dto.name,
+                dto.avatar,
+            )
+    }
+}

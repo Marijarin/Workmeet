@@ -29,8 +29,8 @@ data class Event(
     override val id: Long,
     val authorId: Long = 0L,
     val author: String,
-    val authorAvatar: String,
-    val authorJob: String,
+    val authorAvatar: String?,
+    val authorJob: String?,
     val content: String,
     val datetime: String,
     val published: String,
@@ -59,17 +59,6 @@ data class Job(
     val finish: String?,
     val link: String?,
 ): FeedItem
-
-data class Ad(
-    override val id: Long,
-    val image: String,
-): FeedItem
-
-data class Separator(
-    override val id: Long,
-    val description: String
-): FeedItem
-
 data class User(
     val id: Long,
     val avatar: String,
@@ -91,6 +80,7 @@ data class Coordinates(
 )
 
 data class UserPreview(
+    val userId: Long,
     val name: String,
     val avatar: String,
 )

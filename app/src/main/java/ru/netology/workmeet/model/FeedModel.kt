@@ -3,7 +3,7 @@ package ru.netology.workmeet.model
 import ru.netology.workmeet.dto.FeedItem
 
 data class FeedModel(
-    val posts: List<FeedItem> = emptyList(),
+    val items: List<FeedItem> = emptyList(),
     val empty: Boolean = false,
     )
 
