@@ -23,9 +23,30 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             tools:srcCompat="@sample/posts.json/data/authorAvatar" />
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@id/authorJob"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatar"
+            tools:text="@sample/posts.json/data/author" />
+
+        <TextView
+            android:id="@+id/authorJob"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/author"
+            app:layout_constraintBottom_toTopOf="@id/speakers"
+            tools:text="@sample/posts.json/data/authorJob" />
 
         <Button
-            android:id="@+id/when"
+            android:id="@+id/datetime"
             style="@style/Widget.AppTheme.Menu.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,7 +69,7 @@
             android:maxLines="1"
             app:icon="@drawable/round_language_24"
             app:layout_constraintEnd_toStartOf="@id/menu"
-            app:layout_constraintStart_toEndOf="@id/when"
+            app:layout_constraintStart_toEndOf="@id/datetime"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@sample/events.json/data/type" />
 
@@ -68,6 +89,16 @@
             app:layout_constraintBottom_toTopOf="@id/participants"
              />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/speakersPreview"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/icon_button_min_size"
+            app:layout_constraintStart_toEndOf="@id/speakers"
+            app:layout_constraintTop_toBottomOf="@id/datetime"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_user_preview" />
 
         <Button
             android:id="@+id/participants"
@@ -75,12 +106,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/participants"
+            android:layout_marginTop="@dimen/min_spacing"
             android:textColor="@color/md_theme_light_primary"
             app:icon="@drawable/baseline_groups_2_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/speakers"
             app:layout_constraintBottom_toTopOf="@id/barrierTop"
              />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/participantsPreview"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/large_spacing"
+            app:layout_constraintStart_toEndOf="@id/participants"
+            app:layout_constraintTop_toBottomOf="@id/speakersPreview"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_user_preview" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/menu"
@@ -98,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="participants, menu"
+            app:constraint_referenced_ids="participants, participantsPreview, menu"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="96dp" />
 

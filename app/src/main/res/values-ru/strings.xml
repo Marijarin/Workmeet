@@ -35,4 +35,6 @@
     <string name="invite">Пригласить на событие</string>
     <string name="default_job">работает неизвестно кем</string>
     <string name="like_owner_avatar">Аватар лайкнувшего</string>
+    <string name="finish">наст.время</string>
+    <string name="no_link">ссылка отсутствует</string>
 </resources>

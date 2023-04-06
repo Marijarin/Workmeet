@@ -28,15 +28,6 @@ interface JobDao {
     suspend fun save(job: JobEntity) =
         if (job.id == 0L) insert(job) else job.finish?.let { updateFinishById(job.id, it) }
 
-    @Query("""
-        UPDATE PostEntity SET
-        likeOwnerIds = :likeOwnerIds ,
-        users = :users,
-        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
-        WHERE id = :id
-        """)
-    suspend fun likeById(id: Long, likeOwnerIds: List<Long>, users: List<UserPreview>)
-
     @Query("DELETE FROM JobEntity WHERE id = :id")
     suspend fun removeById(id: Long)
 

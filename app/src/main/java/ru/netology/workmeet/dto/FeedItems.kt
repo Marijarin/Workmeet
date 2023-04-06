@@ -82,6 +82,6 @@ data class Coordinates(
 data class UserPreview(
     val userId: Long,
     val name: String,
-    val avatar: String,
+    val avatar: String?,
 )
 

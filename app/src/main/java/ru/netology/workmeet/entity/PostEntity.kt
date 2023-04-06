@@ -30,10 +30,10 @@ data class PostEntity(
     var attachment: AttachmentEmbeddable?,
     val ownedByMe: Boolean = false,
     val users: List<UserPreview>,
-){
+) {
     fun toDto() = Post(
         id,
-        authorId=authorId,
+        authorId = authorId,
         author,
         authorAvatar,
         authorJob,
@@ -49,6 +49,7 @@ data class PostEntity(
         ownedByMe,
         users
     )
+
     companion object {
         fun fromDto(dto: Post) =
             PostEntity(
@@ -72,6 +73,6 @@ data class PostEntity(
     }
 
 }
-
+fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
 
 

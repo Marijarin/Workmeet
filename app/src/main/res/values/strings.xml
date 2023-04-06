@@ -33,5 +33,7 @@
     <string name="error_loading">Something went wrong. Try again later</string>
     <string name="save">Save</string>
     <string name="default_job">job is not defined</string>
+    <string name="finish">now</string>
+    <string name="no_link">no link to company site</string>
     <string name="like_owner_avatar">Like owner avatar</string>
 </resources>

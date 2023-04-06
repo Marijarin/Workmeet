@@ -7,8 +7,10 @@
     <dimen name="checkbox_padding_start">8dp</dimen>
     <dimen name="icon_button_padding">12dp</dimen>
     <dimen name="icon_button_min_size">48dp</dimen>
+    <dimen name="large_spacing">20dp</dimen>
     <dimen name="icon_button_large_size">200dp</dimen>
     <dimen name="icon_button_medium_size">160dp</dimen>
+    <dimen name="icon_button_size">100dp</dimen>
     <dimen name="text_size_large">24sp</dimen>
 </resources>
 

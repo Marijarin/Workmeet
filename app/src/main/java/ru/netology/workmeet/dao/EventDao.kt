@@ -30,15 +30,6 @@ interface EventDao {
 
     @Query("""
         UPDATE EventEntity SET
-        likeOwnerIds = :likeOwnerIds ,
-        users = :users,
-        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
-        WHERE id = :id
-        """)
-    suspend fun likeById(id: Long, likeOwnerIds: List<Long>, users: List<UserPreview>)
-
-    @Query("""
-        UPDATE EventEntity SET
         participantsIds = :participantsIds ,
         users = :users,
         participatedByMe = CASE WHEN  participatedByMe THEN 0 ELSE 1 END

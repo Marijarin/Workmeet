@@ -1,21 +1,14 @@
 package ru.netology.workmeet.adapter
 
 
-
-import android.app.Application
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.content.res.TypedArrayUtils.getText
-
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.netology.workmeet.BuildConfig
 import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
@@ -34,7 +27,6 @@ interface OnInteractionListener {
     fun onImage(item: FeedItem) {}
     fun onAuth() {}
 }
-
 class FeedItemAdapter(
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
@@ -46,8 +38,6 @@ class FeedItemAdapter(
             is Job -> R.layout.card_job
             null -> error("unknown item type")
         }
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
             R.layout.card_post -> {
@@ -62,13 +52,11 @@ class FeedItemAdapter(
             }
             R.layout.card_job -> {
                 val binding =
-                CardJobBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    CardJobBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 JobViewHolder(binding, onInteractionListener, appAuth)
             }
             else -> error("unknown view type: $viewType")
         }
-
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
             is Post -> (holder as? PostViewHolder)?.bind(item)
@@ -79,31 +67,38 @@ class FeedItemAdapter(
 
     }
 }
-
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
-
     fun bind(post: Post) {
-val s = R.string.default_job
+
+        val childAdapter = UserPreviewAdapter(object : OnUserInteractionListener {
+            //TODO
+        }, appAuth)
+
         binding.apply {
             author.text = post.author
             authorJob.text = post.authorJob ?: itemView.context.getText(R.string.default_job)
             published.text = post.published
             content.text = post.content
             like.isChecked = post.likedByMe
-likeOwners
-
-            Glide.with(avatar)
-                .load("${BuildConfig.BASE_URL}/${post.authorAvatar}")
-                .circleCrop()
-                .placeholder(R.drawable.avatar3)
-                .error(R.drawable.twotone_error_outline_24)
-                .timeout(10_000)
-                .into(avatar)
-
+            likeOwners.adapter = childAdapter
+            when (post.authorAvatar) {
+                null -> Glide.with(avatar)
+                    .load(R.drawable.avatar3)
+                    .circleCrop()
+                    .error(R.drawable.twotone_error_outline_24)
+                    .into(avatar)
+                else -> Glide.with(avatar)
+                    .load("${BuildConfig.BASE_URL}/${post.authorAvatar}")
+                    .circleCrop()
+                    .placeholder(R.drawable.avatar3)
+                    .error(R.drawable.twotone_error_outline_24)
+                    .timeout(10_000)
+                    .into(avatar)
+            }
             attachment.let {
                 if (post.attachment != null) {
                     Glide.with(attachment)
@@ -137,7 +132,6 @@ likeOwners
                     }
                 }.show()
             }
-
             like.setOnClickListener {
                 if (appAuth.state.value.id != 0L) {
                     onInteractionListener.onLike(post)
@@ -157,26 +151,85 @@ class EventViewHolder(
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind (event: Event){
-        binding.apply {
+    fun bind(event: Event) {
+        val childAdapter = UserPreviewAdapter(object : OnUserInteractionListener {
+            //TODO
+        }, appAuth)
 
+        binding.apply {
+            author.text = event.author
+            authorJob.text = event.authorJob ?: itemView.context.getText(R.string.default_job)
+            datetime.text = event.datetime
+            type.text = event.type.name
+            content.text = event.content
+            speakersPreview.adapter = childAdapter
+            participantsPreview.adapter = childAdapter
+            when (event.authorAvatar) {
+                null -> Glide.with(avatar)
+                    .load(R.drawable.avatar3)
+                    .circleCrop()
+                    .error(R.drawable.twotone_error_outline_24)
+                    .into(avatar)
+                else -> Glide.with(avatar)
+                    .load("${BuildConfig.BASE_URL}/${event.authorAvatar}")
+                    .circleCrop()
+                    .placeholder(R.drawable.avatar3)
+                    .error(R.drawable.twotone_error_outline_24)
+                    .timeout(10_000)
+                    .into(avatar)
+            }
+
+            attachment.let {
+                if (event.attachment != null) {
+                    Glide.with(attachment)
+                        .load("${BuildConfig.BASE_URL}/media/${event.attachment.url}")
+                        .placeholder(R.drawable.baseline_attachment_24)
+                        .error(R.drawable.twotone_error_outline_24)
+                        .timeout(10_000)
+                        .into(attachment)
+                }
+            }
+            attachment.isVisible = event.attachment != null
+
+            menu.isVisible = event.ownedByMe
+
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.options_post)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.remove -> {
+                                onInteractionListener.onRemove(event)
+                                true
+                            }
+                            R.id.edit -> {
+                                onInteractionListener.onEdit(event)
+                                true
+                            }
+
+                            else -> false
+                        }
+                    }
+                }.show()
+            }
         }
     }
 }
-
 class JobViewHolder(
     private val binding: CardJobBinding,
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
-
-    fun bind (job: Job) {
+    fun bind(job: Job) {
         binding.apply {
-
+            name.text = job.name
+            position.text = job.position
+            start.text = job.start
+            finish.text = job.finish ?: itemView.context.getText(R.string.finish)
+            link.text = job.link ?: itemView.context.getText(R.string.no_link)
         }
     }
 }
-
 class ItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
     override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         if (oldItem::class != newItem::class) {
@@ -184,7 +237,6 @@ class ItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
         }
         return oldItem.id == newItem.id
     }
-
     override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         return oldItem == newItem
     }
