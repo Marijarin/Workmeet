@@ -21,9 +21,9 @@ data class Post(
     val likedByMe: Boolean = false,
     val attachment: Attachment?,
     val ownedByMe: Boolean = false,
-    val users:List<UserPreview>,
+    val users:List<UserPreview> = emptyList(),
 
-): FeedItem
+    ): FeedItem
 
 data class Event(
     override val id: Long,

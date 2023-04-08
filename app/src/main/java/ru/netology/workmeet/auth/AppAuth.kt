@@ -22,7 +22,7 @@ import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dto.PushToken
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
-import ru.netology.workmeet.error.UnknownError
+import ru.netology.workmeet.error.WhoKnowsError
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -90,7 +90,7 @@ class AppAuth @Inject constructor(
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
-            throw  UnknownError
+            throw  WhoKnowsError
         }
     }
 
@@ -107,7 +107,7 @@ class AppAuth @Inject constructor(
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
-            throw  UnknownError
+            throw  WhoKnowsError
         }
     }
 
@@ -134,7 +134,7 @@ class AppAuth @Inject constructor(
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
-            throw  UnknownError
+            throw  WhoKnowsError
         }
     }
 

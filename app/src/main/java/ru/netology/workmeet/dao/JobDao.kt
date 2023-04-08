@@ -13,20 +13,11 @@ import ru.netology.workmeet.entity.JobEntity
 interface JobDao {
     @Query("SELECT * FROM JobEntity ORDER BY id DESC")
     fun getAll(): Flow<List<JobEntity>>
-    @Query("SELECT * FROM JobEntity ORDER BY id DESC")
-    fun pagingSource(): PagingSource<Int, JobEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(job: JobEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(jobs: List<JobEntity>)
-
-    @Query("UPDATE JobEntity SET finish = :finish WHERE id = :id")
-    suspend fun updateFinishById(id: Long, finish: String)
-
-    suspend fun save(job: JobEntity) =
-        if (job.id == 0L) insert(job) else job.finish?.let { updateFinishById(job.id, it) }
 
     @Query("DELETE FROM JobEntity WHERE id = :id")
     suspend fun removeById(id: Long)

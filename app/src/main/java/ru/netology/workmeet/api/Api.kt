@@ -96,10 +96,10 @@ interface ApiService {
     suspend fun removeByIdE(@Path("event_id") id: Long): Response<Unit>
 
     @POST("events/{event_id}/participants")
-    suspend fun participateByIdE(@Path("event_id") id: Long): Response<Event>
+    suspend fun participateById(@Path("event_id") id: Long): Response<Event>
 
     @DELETE("events/{event_id}/participants")
-    suspend fun avoidByIdE(@Path("event_id") id: Long): Response<Event>
+    suspend fun avoidById(@Path("event_id") id: Long): Response<Event>
 
     /***** Jobs *****/
 
@@ -110,10 +110,10 @@ interface ApiService {
     suspend fun getAllMyJ(): Response<List<Job>>
 
     @POST("my/jobs")
-    suspend fun saveJ(): Response <Job>
+    suspend fun saveJ(@Body job: Job): Response <Job>
 
     @DELETE("my/jobs/{job_id}")
-    suspend fun removeByIdJ(@Header ("Authorization") token: String, @Path("id") id: Long): Response<Job>
+    suspend fun removeByIdJ(@Path("id") id: Long): Response<Job>
 
     /***** My Wall *****/
 

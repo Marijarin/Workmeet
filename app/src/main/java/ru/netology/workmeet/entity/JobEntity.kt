@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.workmeet.dto.Event
 import ru.netology.workmeet.dto.Job
+import ru.netology.workmeet.dto.Post
 
 @Entity
 data class JobEntity(
@@ -35,3 +36,4 @@ data class JobEntity(
             )
     }
 }
+fun List<Job>.toEntity(): List<JobEntity> = map(JobEntity::fromDto)

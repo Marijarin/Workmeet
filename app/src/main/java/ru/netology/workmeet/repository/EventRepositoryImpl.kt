@@ -3,13 +3,20 @@ package ru.netology.workmeet.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okio.IOException
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.EventDao
 import ru.netology.workmeet.dao.EventRemoteKeyDao
 import ru.netology.workmeet.db.AppDb
-import ru.netology.workmeet.dto.Event
-import ru.netology.workmeet.dto.FeedItem
+import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.entity.EventEntity
+import ru.netology.workmeet.entity.PostEntity
+import ru.netology.workmeet.error.ApiError
+import ru.netology.workmeet.error.NetworkError
+import ru.netology.workmeet.error.WhoKnowsError
+import java.io.File
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
@@ -27,21 +34,96 @@ class EventRepositoryImpl @Inject constructor(
         pagingData.map(EventEntity::toDto)
     }
     override suspend fun getAllE() {
-        TODO("Not yet implemented")
+        TODO("There's no need in this fun right now")
     }
 
     override suspend fun participateById(id: Long) {
-        TODO("Not yet implemented")
+        try {
+            val response = apiService.participateById(id)
+            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
+            val users = response.body()?.users ?: emptyList()
+            eventDao.participateById(id, likeOwnerIds, users)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
     }
 
     override suspend fun avoidById(id: Long) {
-        TODO("Not yet implemented")
+        try {
+            val response = apiService.participateById(id)
+            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
+            val users = response.body()?.users ?: emptyList()
+            eventDao.participateById(id, likeOwnerIds, users)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
     }
 
     override suspend fun save(event: Event) {
-        TODO("Not yet implemented")
+        try {
+            val response = apiService.saveE(event)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val newEvent = response.body() ?: throw ApiError(response.code(), response.message())
+            eventDao.insert(EventEntity.fromDto(newEvent))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
     }
     override suspend fun removeById(id: Long) {
+        try {
+            val response = apiService.removeByIdE(id)
+            eventDao.removeById(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+    }
+    private suspend fun upload(file: File): Media {
+        try {
+            val data = MultipartBody.Part.createFormData(
+                "file",
+                file.name,
+                file.asRequestBody()
+            )
+            val response = apiService.upload(data)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+    }
 
+    override suspend fun saveWithAttachment(event: Event, file: File, type: AttachmentType) {
+        try {
+            val upload = upload(file)
+            val eventWithAttachment = event.copy(attachment = Attachment(upload.id, type))
+            save(eventWithAttachment)
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
     }
 }
