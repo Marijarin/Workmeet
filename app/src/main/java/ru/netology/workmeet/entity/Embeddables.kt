@@ -1,5 +1,6 @@
 package ru.netology.workmeet.entity
 
+import com.google.gson.annotations.SerializedName
 import ru.netology.workmeet.dto.Attachment
 import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.Coordinates
@@ -18,13 +19,14 @@ data class AttachmentEmbeddable (
 }
 data class CoordsEmbeddable (
     var lat: String,
-    var long: String,
+    @SerializedName("long")
+    var longi: String,
 ) {
-    fun toDto () = Coordinates (lat, long)
+    fun toDto () = Coordinates (lat, longi)
 
     companion object {
         fun fromDto(dto: Coordinates?) = dto?.let {
-            CoordsEmbeddable(it.lat, it.long)
+            CoordsEmbeddable(it.lat, it.longi)
         }
     }
 }

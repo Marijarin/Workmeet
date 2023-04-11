@@ -2,7 +2,6 @@ package ru.netology.workmeet.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import ru.netology.workmeet.dto.UserPreview
 import ru.netology.workmeet.entity.PostEntity

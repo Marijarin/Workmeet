@@ -2,7 +2,6 @@ package ru.netology.workmeet.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.workmeet.dto.User
 import ru.netology.workmeet.dto.UserPreview
 
 @Entity
@@ -20,7 +19,7 @@ data class UserPreviewEntity(
     companion object {
         fun fromDto(dto: UserPreview) =
             UserPreviewEntity(
-                dto.userId,
+                dto.id,
                 dto.name,
                 dto.avatar,
             )

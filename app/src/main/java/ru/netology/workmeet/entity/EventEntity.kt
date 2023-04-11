@@ -26,11 +26,11 @@ data class EventEntity(
     val speakerIds: List<Long>,
     val participantsIds: List<Long>,
     val participatedByMe: Boolean = false,
-    @Embedded
+    @Embedded(prefix = "attachment_")
     var attachment: AttachmentEmbeddable?,
     val link: String,
     val ownedByMe: Boolean = false,
-    val users: List<UserPreview>,
+    var users: List<UserPreview>,
 ){
     fun toDto() = Event(
         id,

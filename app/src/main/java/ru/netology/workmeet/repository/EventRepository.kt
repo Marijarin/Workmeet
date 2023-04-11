@@ -11,6 +11,8 @@ import java.io.File
 interface EventRepository {
     val data: Flow<PagingData<FeedItem>>
     suspend fun getAllE()
+    suspend fun likeById(id: Long)
+    suspend fun unlikeById(id: Long)
     suspend fun participateById(id: Long)
     suspend fun avoidById(id: Long)
     suspend fun save(event: Event)

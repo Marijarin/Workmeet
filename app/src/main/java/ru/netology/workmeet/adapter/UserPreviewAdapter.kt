@@ -1,10 +1,8 @@
 package ru.netology.workmeet.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -72,7 +70,7 @@ class UserPreviewDiffCallback : DiffUtil.ItemCallback<UserPreview>() {
         if (oldItem::class != newItem::class) {
             return false
         }
-        return oldItem.userId == newItem.userId
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: UserPreview, newItem: UserPreview): Boolean {

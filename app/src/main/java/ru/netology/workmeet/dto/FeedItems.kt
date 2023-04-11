@@ -1,5 +1,7 @@
 package ru.netology.workmeet.dto
 
+import com.google.gson.annotations.SerializedName
+
 
 sealed interface FeedItem {
     val id: Long
@@ -37,18 +39,18 @@ data class Event(
     val coords: Coordinates?,
     val type: EventType,
     val likeOwnerIds: List<Long> = emptyList(),
-    val likedByMe: Boolean,
-    val speakerIds: List<Long>,
-    val participantsIds: List<Long>,
+    val likedByMe: Boolean = false,
+    val speakerIds: List<Long> = emptyList(),
+    val participantsIds: List<Long> = emptyList(),
     val participatedByMe: Boolean = false,
     val attachment: Attachment?,
     val link: String,
     val ownedByMe: Boolean = false,
-    val users: List<UserPreview>,
+    val users: List<UserPreview> = emptyList(),
     ): FeedItem
 
 enum class EventType{
-    OFFLINE, ONLINE
+    OFFLINE, ONLINE, EMPTY
 }
 
 data class Job(
@@ -76,11 +78,12 @@ enum class AttachmentType {
 
 data class Coordinates(
     val lat: String,
-    val long: String,
+    @SerializedName("longi")
+    val longi: String,
 )
 
 data class UserPreview(
-    val userId: Long,
+    val id: Long,
     val name: String,
     val avatar: String?,
 )

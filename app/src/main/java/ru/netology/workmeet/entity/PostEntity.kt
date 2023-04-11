@@ -26,10 +26,10 @@ data class PostEntity(
     val mentionIds: List<Long> = emptyList(),
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
-    @Embedded
+    @Embedded(prefix = "attachment_")
     var attachment: AttachmentEmbeddable?,
     val ownedByMe: Boolean = false,
-    val users: List<UserPreview>,
+    var users: List<UserPreview>,
 ) {
     fun toDto() = Post(
         id,

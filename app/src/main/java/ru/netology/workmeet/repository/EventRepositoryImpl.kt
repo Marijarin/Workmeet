@@ -12,7 +12,6 @@ import ru.netology.workmeet.dao.EventRemoteKeyDao
 import ru.netology.workmeet.db.AppDb
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.entity.EventEntity
-import ru.netology.workmeet.entity.PostEntity
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
@@ -36,7 +35,38 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun getAllE() {
         TODO("There's no need in this fun right now")
     }
-
+    override suspend fun likeById(id: Long) {
+        try {
+            val response = apiService.likeByIdE(id)
+            if(response.isSuccessful) {
+                val updated = EventEntity.fromDto(response.body()!!)
+                eventDao.insert(updated)
+            }
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+    }
+    override suspend fun unlikeById(id: Long) {
+        try {
+            val response = apiService.likeByIdE(id)
+            if(response.isSuccessful) {
+                val updated = EventEntity.fromDto(response.body()!!)
+                eventDao.insert(updated)
+            }
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+    }
     override suspend fun participateById(id: Long) {
         try {
             val response = apiService.participateById(id)
