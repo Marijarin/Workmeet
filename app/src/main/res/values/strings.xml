@@ -24,7 +24,7 @@
     <string name="warn_out">Only authorized users can post and like.</string>
     <string name="not_confirmed">Passwords do not match!</string>
     <string name="avatar">Click here to upload your avatar</string>
-    <string name="add_post">Add post</string>
+    <string name="add_post">new post</string>
     <string name="retry_loading">Retry</string>
     <string name="message">Write a message</string>
     <string name="my_messages">My messages</string>
@@ -36,4 +36,13 @@
     <string name="finish">now</string>
     <string name="no_link">no link to company site</string>
     <string name="like_owner_avatar">Like owner avatar</string>
+    <string name="post_feed">posts</string>
+    <string name="event_feed">events</string>
+    <string name="my_page">my page</string>
+    <string name="jobs">jobs</string>
+    <string name="add_event">new event</string>
+    <string name="add_job">new job</string>
+    <string name="to_jobs">to jobs</string>
+    <string name="to_posts">to posts</string>
+    <string name="google_play_unavailable">Google Api Unavailable</string>
 </resources>

@@ -7,9 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
-import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.Job
-import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.repository.JobRepository
 import ru.netology.workmeet.util.SingleLiveEvent
@@ -32,19 +30,13 @@ class JobViewModel @Inject constructor(
     val data: Flow<List<Job>> = _data.asStateFlow()
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
-        get() = _dataState
-    init{
-        loadJobs()
-    }
+    get() = _dataState
 
-    val id = savedStateHandle.get<Long>("id") ?: 0L
-    val myId = appAuth.state.value.id
-    fun loadJobs(){
+    fun loadJobs(id: Long){
         viewModelScope.launch{
             try {
                 _dataState.value = FeedModelState.Loading
-                if (id!=myId) repository.getAllJ(id)
-                else repository.getAllMyJobs()
+                repository.getAllJ(id)
                 _dataState.value = FeedModelState.Idle
             }catch (e: Exception) {
                 _dataState.value = FeedModelState.Error
@@ -56,12 +48,12 @@ class JobViewModel @Inject constructor(
     val jobCreated: LiveData<Unit>
         get() = _jobCreated
 
-    fun save() = viewModelScope.launch{
+    fun save(id: Long) = viewModelScope.launch{
         edited.value?.let {
             _jobCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    repository.save(it)
+                    repository.save(it, id)
                     _dataState.value = FeedModelState.Idle
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState.Error

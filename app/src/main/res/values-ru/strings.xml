@@ -25,7 +25,7 @@
     <string name="want_to_sign_out">Подтвердите выход из аккаунта</string>
     <string name="not_confirmed">Пароли не совпадают!</string>
     <string name="avatar">Загрузить аватар</string>
-    <string name="add_post">Добавить пост</string>
+    <string name="add_post">новый пост</string>
     <string name="retry_loading">Повторить</string>
     <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
     <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
@@ -37,4 +37,13 @@
     <string name="like_owner_avatar">Аватар лайкнувшего</string>
     <string name="finish">наст.время</string>
     <string name="no_link">ссылка отсутствует</string>
+    <string name="post_feed">посты</string>
+    <string name="event_feed">даты</string>
+    <string name="my_page">моя стр</string>
+    <string name="jobs">работы</string>
+    <string name="add_event">новая дата</string>
+    <string name="add_job">новая работа</string>
+    <string name="to_jobs">к работам</string>
+    <string name="to_posts">к постам</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
 </resources>

@@ -131,16 +131,39 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabCradleVerticalOffset="@dimen/common_spacing">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/toPosts"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:contentDescription="@string/to_posts"
+            android:text="@string/to_posts"
+            app:icon="@drawable/baseline_double_arrow_24"
+            app:iconGravity="textTop"
+            app:iconSize="@dimen/icon_min_size"
+            />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        android:contentDescription="@string/add_post"
+        android:contentDescription="@string/add_job"
         android:focusable="true"
-        app:srcCompat="@drawable/sharp_add_24" />
+        android:text="@string/add_job"
+        app:layout_anchor="@id/bottomAppBar"/>
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

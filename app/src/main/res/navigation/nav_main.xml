@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/eventFeedFragment">
+    <fragment
+        android:id="@+id/eventFeedFragment"
+        android:name="ru.netology.workmeet.ui.EventFeedFragment"
+        android:label="Events">
+        <action
+            android:id="@+id/action_eventFeedFragment_to_postFeedFragment"
+            app:destination="@id/postFeedFragment" />
+        <action
+            android:id="@+id/action_eventFeedFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_eventFeedFragment_to_wallFragment"
+            app:destination="@id/wallFragment" />
+        <action
+            android:id="@+id/action_eventFeedFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_eventFeedFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postFeedFragment"
+        android:name="ru.netology.workmeet.ui.PostFeedFragment"
+        android:label="Posts">
+        <action
+            android:id="@+id/action_postFeedFragment_to_eventFeedFragment"
+            app:destination="@id/eventFeedFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_wallFragment"
+            app:destination="@id/wallFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newEventFragment"
+        android:name="ru.netology.workmeet.ui.NewEventFragment"
+        android:label="NewEvent">
+        <action
+            android:id="@+id/action_newEventFragment_to_eventFeedFragment"
+            app:destination="@id/eventFeedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/wallFragment"
+        android:name="ru.netology.workmeet.ui.WallFragment"
+        android:label="Wall">
+        <action
+            android:id="@+id/action_wallFragment_to_postFeedFragment"
+            app:destination="@id/postFeedFragment" />
+        <action
+            android:id="@+id/action_wallFragment_to_eventFeedFragment"
+            app:destination="@id/eventFeedFragment" />
+        <action
+            android:id="@+id/action_wallFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_wallFragment_to_userJobsFragment"
+            app:destination="@id/userJobsFragment" />
+        <action
+            android:id="@+id/action_wallFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment" />
+        <action
+            android:id="@+id/action_wallFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userJobsFragment"
+        android:name="ru.netology.workmeet.ui.UserJobsFragment"
+        android:label="Jobs">
+        <action
+            android:id="@+id/action_userJobsFragment_to_wallFragment"
+            app:destination="@id/wallFragment" />
+        <action
+            android:id="@+id/action_userJobsFragment_to_newJobFragment"
+            app:destination="@id/newJobFragment" />
+        <action
+            android:id="@+id/action_userJobsFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="ru.netology.workmeet.ui.NewPostFragment"
+        android:label="NewPost">
+        <action
+            android:id="@+id/action_newPostFragment_to_postFeedFragment"
+            app:destination="@id/postFeedFragment" />
+        <action
+            android:id="@+id/action_newPostFragment_to_wallFragment"
+            app:destination="@id/wallFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newJobFragment"
+        android:name="ru.netology.workmeet.ui.NewJobFragment"
+        android:label="NewJob">
+        <action
+            android:id="@+id/action_newJobFragment_to_userJobsFragment"
+            app:destination="@id/userJobsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="ru.netology.workmeet.ui.SignUpFragment"
+        android:label="SignUp" />
+    <dialog
+        android:id="@+id/signInFragment"
+        android:name="ru.netology.workmeet.ui.SignInFragment"
+        android:label="SignIn" />
+
+</navigation>

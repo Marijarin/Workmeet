@@ -1,9 +1,6 @@
 package ru.netology.workmeet.entity
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import ru.netology.workmeet.dto.*
 
 @Entity

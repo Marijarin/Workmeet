@@ -32,12 +32,10 @@ class EventRepositoryImpl @Inject constructor(
     ).flow.map { pagingData ->
         pagingData.map(EventEntity::toDto)
     }
-    override suspend fun getAllE() {
-        TODO("There's no need in this fun right now")
-    }
     override suspend fun likeById(id: Long) {
         try {
             val response = apiService.likeByIdE(id)
+            eventDao.likeById(id)
             if(response.isSuccessful) {
                 val updated = EventEntity.fromDto(response.body()!!)
                 eventDao.insert(updated)
@@ -54,6 +52,7 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun unlikeById(id: Long) {
         try {
             val response = apiService.likeByIdE(id)
+            eventDao.likeById(id)
             if(response.isSuccessful) {
                 val updated = EventEntity.fromDto(response.body()!!)
                 eventDao.insert(updated)
@@ -70,9 +69,11 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun participateById(id: Long) {
         try {
             val response = apiService.participateById(id)
-            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
-            val users = response.body()?.users ?: emptyList()
-            eventDao.participateById(id, likeOwnerIds, users)
+            eventDao.participateById(id)
+            if(response.isSuccessful) {
+                val updated = EventEntity.fromDto(response.body()!!)
+                eventDao.insert(updated)
+            }
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -86,9 +87,11 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun avoidById(id: Long) {
         try {
             val response = apiService.participateById(id)
-            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
-            val users = response.body()?.users ?: emptyList()
-            eventDao.participateById(id, likeOwnerIds, users)
+            eventDao.participateById(id)
+            if(response.isSuccessful) {
+                val updated = EventEntity.fromDto(response.body()!!)
+                eventDao.insert(updated)
+            }
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

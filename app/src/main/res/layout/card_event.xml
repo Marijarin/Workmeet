@@ -178,7 +178,7 @@
             android:contentDescription="@string/description_post_likes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/attachment"
-            app:icon="@drawable/baseline_favorite_24"
+            app:icon="@drawable/baseline_favorite_border_24"
             tools:text="@sample/posts.json/data/likes"
             style="@style/Widget.AppTheme.Button.Like"
             />

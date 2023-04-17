@@ -70,6 +70,8 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
+
+
     fun save() = viewModelScope.launch{
         edited.value?.let {
             _postCreated.value = Unit

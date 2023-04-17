@@ -1,5 +1,6 @@
 package ru.netology.workmeet.dto
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
 
@@ -60,10 +61,11 @@ data class Job(
     val start: String,
     val finish: String?,
     val link: String?,
+
 ): FeedItem
 data class User(
     val id: Long,
-    val avatar: String,
+    val avatar: String?,
     val login: String,
     val name: String,
 
@@ -86,5 +88,11 @@ data class UserPreview(
     val id: Long,
     val name: String,
     val avatar: String?,
-)
+){
+    fun toJson(userPreview: UserPreview): String = Gson().toJson(userPreview)
+    companion object {
+        fun fromJson(value: String) = Gson().fromJson(value, UserPreview::class.java)
+    }
+
+}
 

@@ -2,14 +2,14 @@ package ru.netology.workmeet.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.workmeet.dto.Job
 import ru.netology.workmeet.dto.User
+import ru.netology.workmeet.dto.UserPreview
 
 @Entity
 data class UserEntity(
     @PrimaryKey(autoGenerate = true)
     val id:Long,
-    val avatar: String,
+    val avatar: String?,
     val login: String,
     val name: String,
 ){

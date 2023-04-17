@@ -27,7 +27,7 @@ interface OnInteractionListener {
     fun onImage(item: FeedItem) {}
     fun onAuth() {}
 }
-class FeedItemAdapter(
+class LargeItemAdapter(
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(ItemDiffCallback()) {
@@ -35,8 +35,7 @@ class FeedItemAdapter(
         when (getItem(position)) {
             is Post -> R.layout.card_post
             is Event -> R.layout.card_event
-            is Job -> R.layout.card_job
-            null -> error("unknown item type")
+            else -> error("unknown item type")
         }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
@@ -50,21 +49,14 @@ class FeedItemAdapter(
                     CardEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 EventViewHolder(binding, onInteractionListener, appAuth)
             }
-            R.layout.card_job -> {
-                val binding =
-                    CardJobBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                JobViewHolder(binding, onInteractionListener, appAuth)
-            }
             else -> error("unknown view type: $viewType")
         }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
             is Post -> (holder as? PostViewHolder)?.bind(item)
             is Event -> (holder as? EventViewHolder)?.bind(item)
-            is Job -> (holder as? JobViewHolder)?.bind(item)
-            null -> error("unknown item type")
+            else -> error("unknown item type")
         }
-
     }
 }
 class PostViewHolder(
@@ -215,21 +207,7 @@ class EventViewHolder(
         }
     }
 }
-class JobViewHolder(
-    private val binding: CardJobBinding,
-    private val onInteractionListener: OnInteractionListener,
-    private val appAuth: AppAuth
-) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(job: Job) {
-        binding.apply {
-            name.text = job.name
-            position.text = job.position
-            start.text = job.start
-            finish.text = job.finish ?: itemView.context.getText(R.string.finish)
-            link.text = job.link ?: itemView.context.getText(R.string.no_link)
-        }
-    }
-}
+
 class ItemDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
     override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         if (oldItem::class != newItem::class) {

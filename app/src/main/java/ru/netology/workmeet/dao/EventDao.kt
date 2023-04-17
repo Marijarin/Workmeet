@@ -11,8 +11,7 @@ import ru.netology.workmeet.entity.EventEntity
 
 @Dao
 interface EventDao {
-    @Query("SELECT * FROM EventEntity ORDER BY id DESC")
-    fun getAll(): Flow<List<EventEntity>>
+
     @Query("SELECT * FROM EventEntity ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, EventEntity>
 
@@ -29,13 +28,20 @@ interface EventDao {
         if (event.id == 0L) insert(event) else updateContentById(event.id, event.content)
 
     @Query("""
-        UPDATE EventEntity SET
-        participantsIds = :participantsIds ,
-        users = :users,
-        participatedByMe = CASE WHEN  participatedByMe THEN 0 ELSE 1 END
+        UPDATE PostEntity SET
+        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
         WHERE id = :id
         """)
-    suspend fun participateById(id: Long, participantsIds: List<Long>, users: List<UserPreview>)
+    suspend fun likeById(id: Long)
+
+    @Query(
+        """
+        UPDATE EventEntity SET
+        participatedByMe = CASE WHEN  participatedByMe THEN 0 ELSE 1 END
+        WHERE id = :id
+        """
+    )
+    suspend fun participateById(id: Long)
 
 
     @Query("DELETE FROM EventEntity WHERE id = :id")

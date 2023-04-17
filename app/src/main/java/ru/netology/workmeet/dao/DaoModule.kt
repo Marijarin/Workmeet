@@ -21,7 +21,5 @@ object DaoModule {
     fun provideJobDao(db: AppDb): JobDao = db.jobDao()
        @Provides
     fun provideUserDao(db: AppDb): UserDao = db.userDao()
-    @Provides
-    fun provideUserPreviewDao(db: AppDb): UserPreviewDao = db.userPreviewDao()
 
 }

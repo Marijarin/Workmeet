@@ -2,14 +2,11 @@ package ru.netology.workmeet.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
-import ru.netology.workmeet.dto.UserPreview
 import ru.netology.workmeet.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-    fun getAll(): Flow<List<PostEntity>>
+    @Transaction
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, PostEntity>
 
@@ -27,12 +24,10 @@ interface PostDao {
 
     @Query("""
         UPDATE PostEntity SET
-        likeOwnerIds = :likeOwnerIds ,
-        users = :users,
         likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
         WHERE id = :id
         """)
-    suspend fun likeById(id: Long, likeOwnerIds: List<Long>, users: List<UserPreview>)
+    suspend fun likeById(id: Long)
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)

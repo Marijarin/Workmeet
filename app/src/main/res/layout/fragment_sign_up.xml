@@ -24,7 +24,8 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/avatar"
-                tools:srcCompat="@drawable/avatar3" />
+                android:src="@drawable/avatar3"
+                 />
 
             <Button
                 android:id="@+id/uploadAvatar"

@@ -33,16 +33,14 @@ class PostRepositoryImpl @Inject constructor(
         pagingData.map(PostEntity::toDto)
     }
 
-    override suspend fun getAllP() {
-        TODO("There's no need in this fun right now")
-    }
-
     override suspend fun likeById(id: Long) {
         try {
             val response = apiService.likeByIdP(id)
-            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
-            val users = response.body()?.users ?: emptyList()
-            postDao.likeById(id, likeOwnerIds, users)
+            postDao.likeById(id)
+            if (response.body()!=null && response.isSuccessful) {
+                val post: Post = response.body()!!
+                postDao.insert(PostEntity.fromDto(post))
+            }
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -56,9 +54,11 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun unlikeById(id: Long) {
         try {
             val response = apiService.likeByIdP(id)
-            val likeOwnerIds = response.body()?.likeOwnerIds ?: emptyList()
-            val users = response.body()?.users ?: emptyList()
-            postDao.likeById(id, likeOwnerIds, users)
+            postDao.likeById(id)
+            if (response.body()!=null && response.isSuccessful) {
+                val post: Post = response.body()!!
+                postDao.insert(PostEntity.fromDto(post))
+            }
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

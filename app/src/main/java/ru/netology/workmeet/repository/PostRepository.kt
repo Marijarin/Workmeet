@@ -9,7 +9,6 @@ import java.io.File
 
 interface PostRepository {
     val data: Flow<PagingData<FeedItem>>
-    suspend fun getAllP()
     suspend fun likeById(id: Long)
     suspend fun unlikeById(id: Long)
     suspend fun save(post: Post)

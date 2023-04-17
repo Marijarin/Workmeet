@@ -2,9 +2,7 @@ package ru.netology.workmeet.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.workmeet.dto.Event
 import ru.netology.workmeet.dto.Job
-import ru.netology.workmeet.dto.Post
 
 @Entity
 data class JobEntity(
@@ -15,6 +13,7 @@ data class JobEntity(
     val start: String,
     val finish: String?,
     val link: String?,
+    val userId: Long,
 ){
     fun toDto() = Job(
         id,
@@ -25,15 +24,16 @@ data class JobEntity(
         link
     )
     companion object{
-        fun fromDto(dto: Job) =
+        fun fromDto(dto: Job, id: Long) =
             JobEntity(
                 dto.id,
                 dto.name,
                 dto.position,
                 dto.start,
                 dto.finish,
-                dto.link
+                dto.link,
+                id
             )
     }
 }
-fun List<Job>.toEntity(): List<JobEntity> = map(JobEntity::fromDto)
+fun List<Job>.toEntity(id: Long): List<JobEntity> = map{JobEntity.fromDto(it,id) }

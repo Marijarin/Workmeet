@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/postFeedFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_article_24"
+        android:title="@string/post_feed"/>
+    <item
+        android:id="@+id/eventFeedFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_calendar_month_24"
+        android:title="@string/event_feed"/>
+    <item
+        android:id="@+id/wallFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_perm_contact_calendar_24"
+        android:title="@string/my_page"
+        />
+
+</menu>
