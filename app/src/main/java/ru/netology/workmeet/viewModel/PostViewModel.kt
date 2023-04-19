@@ -70,7 +70,18 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
+    init {
+        loadPosts()
+    }
 
+    fun loadPosts() = viewModelScope.launch{
+        try {
+            _dataState.value = FeedModelState.Loading
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception){
+            _dataState.value = FeedModelState.Error
+        }
+    }
 
     fun save() = viewModelScope.launch{
         edited.value?.let {

@@ -2,24 +2,18 @@ package ru.netology.workmeet.auth
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import ru.netology.workmeet.api.ApiService
-import ru.netology.workmeet.dto.PushToken
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
@@ -49,7 +43,7 @@ class AppAuth @Inject constructor(
         } else {
             _state = MutableStateFlow(AuthState(id, token))
         }
-        sendPushToken()
+
     }
 
     val state = _state.asStateFlow()
@@ -61,7 +55,7 @@ class AppAuth @Inject constructor(
             putString(TOKEN_KEY, token)
         }
         _state.value = AuthState(id, token)
-        sendPushToken()
+
     }
 
     @Synchronized
@@ -70,7 +64,6 @@ class AppAuth @Inject constructor(
             clear()
         }
         _state.value = AuthState()
-        sendPushToken()
     }
     @InstallIn(SingletonComponent::class)
     @EntryPoint
@@ -138,18 +131,4 @@ class AppAuth @Inject constructor(
         }
     }
 
-    fun sendPushToken(token: String? = null) {
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                val entryPoint = EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
-                entryPoint.getApiService().sendPushToken(
-                    PushToken(
-                        token ?: FirebaseMessaging.getInstance().token.await()
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 }

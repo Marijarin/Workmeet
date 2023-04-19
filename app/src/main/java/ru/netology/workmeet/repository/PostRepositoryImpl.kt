@@ -17,7 +17,9 @@ import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val postDao: PostDao,
@@ -26,7 +28,7 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
-        config = PagingConfig(pageSize = 10),
+        config = PagingConfig(pageSize = 5),
         remoteMediator = PostRemoteMediator(apiService, appDb, postDao, postRemoteKeyDao),
         pagingSourceFactory = postDao::pagingSource
     ).flow.map { pagingData ->
@@ -53,7 +55,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun unlikeById(id: Long) {
         try {
-            val response = apiService.likeByIdP(id)
+            val response = apiService.unlikeByIdP(id)
             postDao.likeById(id)
             if (response.body()!=null && response.isSuccessful) {
                 val post: Post = response.body()!!

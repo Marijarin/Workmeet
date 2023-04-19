@@ -15,12 +15,13 @@
         tools:context=".ui.AppActivity"
         tools:layout="@layout/activity_app" />
 
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/common_spacing"
         android:layout_marginTop="@dimen/min_spacing"
+        android:layout_gravity="bottom"
         app:menu="@menu/bottom_feed_navigation_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

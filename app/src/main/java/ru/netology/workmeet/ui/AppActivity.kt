@@ -11,7 +11,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -20,7 +19,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
@@ -120,11 +118,11 @@ class AppActivity : AppCompatActivity() {
                             true
                         }
                         R.id.signin -> {
-                            findNavController(R.id.nav_host_fragment).navigate(R.id.action_eventFeedFragment_to_signInFragment)
+                            findNavController(R.id.nav_host_fragment).navigate(R.id.signInFragment)
                             true
                         }
                         R.id.signup -> {
-                            findNavController(R.id.nav_host_fragment).navigate(R.id.action_eventFeedFragment_to_signUpFragment)
+                            findNavController(R.id.nav_host_fragment).navigate(R.id.signUpFragment)
                             true
                         }
                         else -> false

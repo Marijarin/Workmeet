@@ -6,7 +6,6 @@ import ru.netology.workmeet.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Transaction
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, PostEntity>
 
@@ -34,4 +33,5 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAll()
+
 }

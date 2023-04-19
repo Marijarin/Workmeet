@@ -43,7 +43,14 @@
     <string name="jobs">работы</string>
     <string name="add_event">новая дата</string>
     <string name="add_job">новая работа</string>
-    <string name="to_jobs">к работам</string>
-    <string name="to_posts">к постам</string>
+    <string name="to_jobs">раб.</string>
+    <string name="to_posts">посты</string>
     <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="description_photo">Фото</string>
+    <string name="remove">Удалить</string>
+    <string name="description_select_photo">Выбрать фото</string>
+    <string name="description_take_photo">Сфотографировать</string>
+    <string name="description_add_video">Добавить видео</string>
+    <string name="description_add_audio">Добавить аудио</string>
+    <string name="description_mention">Упомянуть пользователя</string>
 </resources>

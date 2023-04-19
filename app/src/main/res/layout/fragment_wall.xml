@@ -65,6 +65,7 @@
             android:layout_marginEnd="@dimen/min_spacing"
             android:contentDescription="@string/description_post_menu"
             android:text="@string/message"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,6 +89,7 @@
             android:layout_marginEnd="@dimen/min_spacing"
             android:contentDescription="@string/description_post_menu"
             android:text="@string/invite"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/barrierTop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/message" />
@@ -128,44 +130,41 @@
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toTopOf="@id/barrierTop"
+            tools:layout_editor_absoluteX="16dp"
             tools:listitem="@layout/user_card_post" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:contentDescription="@string/add_post"
+            android:focusable="true"
+            android:text="@string/add_post"
+            android:layout_marginBottom="@dimen/margin_fab"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:fabCradleVerticalOffset="@dimen/common_spacing"
-        >
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/toJobs"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="@dimen/icon_button_size"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:contentDescription="@string/to_jobs"
-            android:text="@string/to_jobs"
-            app:icon="@drawable/baseline_double_arrow_24"
-            app:iconGravity="textTop"
-            app:iconSize="@dimen/icon_min_size"
-             />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/toJobs"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="62dp"
+        android:layout_height="147dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/button_margin"
+        android:contentDescription="@string/to_jobs"
+        android:text="@string/to_jobs"
+        app:icon="@drawable/baseline_double_arrow_24"
+        app:iconGravity="textTop"
+        app:iconPadding="@dimen/large_spacing"
+        app:iconSize="@dimen/icon_min_size" />
 
 
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        android:contentDescription="@string/add_post"
-        android:focusable="true"
-        android:text="@string/add_post"
-        app:layout_anchor="@id/bottomAppBar" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

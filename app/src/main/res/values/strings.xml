@@ -42,7 +42,14 @@
     <string name="jobs">jobs</string>
     <string name="add_event">new event</string>
     <string name="add_job">new job</string>
-    <string name="to_jobs">to jobs</string>
-    <string name="to_posts">to posts</string>
+    <string name="description_photo">It is a photo</string>
+    <string name="remove">Remove</string>
+    <string name="to_jobs">jobs</string>
+    <string name="to_posts">posts</string>
     <string name="google_play_unavailable">Google Api Unavailable</string>
+    <string name="description_select_photo">Select photo please</string>
+    <string name="description_take_photo">Take photo please</string>
+    <string name="description_add_video">Add video</string>
+    <string name="description_add_audio">Add audio</string>
+    <string name="description_mention">Mention a user</string>
 </resources>
