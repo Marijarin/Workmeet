@@ -119,18 +119,19 @@ class EventFeedFragment: Fragment() {
                     return@observe
                 }
                 findNavController()
-                    .navigate(R.id.action_postFeedFragment_to_newPostFragment, Bundle().apply {
+                    .navigate(R.id.action_eventFeedFragment_to_newEventFragment, Bundle().apply {
                         textArg = event.content
                     })
 
             }
 
             binding.fab.setOnClickListener {
+                it.visibility = View.VISIBLE
                 if (!authViewModel.authenticated) {
                     alertDialog?.show()
                 }
                 setFragmentResultListener("signInClosed") { _, _ ->
-                    if (authViewModel.authenticated) findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                    if (authViewModel.authenticated) findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
                 }
             }
             return binding.root

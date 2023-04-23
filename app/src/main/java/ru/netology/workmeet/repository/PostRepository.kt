@@ -14,5 +14,6 @@ interface PostRepository {
     suspend fun save(post: Post)
     suspend fun removeById(id: Long)
     suspend fun saveWithAttachment(post: Post, file: File, type: AttachmentType)
+    suspend fun getUserById(userId: Long)
 
 }

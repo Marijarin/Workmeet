@@ -9,9 +9,11 @@ import okio.IOException
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.PostDao
 import ru.netology.workmeet.dao.PostRemoteKeyDao
+import ru.netology.workmeet.dao.UserDao
 import ru.netology.workmeet.db.AppDb
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.entity.PostEntity
+import ru.netology.workmeet.entity.UserEntity
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
@@ -23,12 +25,13 @@ import javax.inject.Singleton
 class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val postDao: PostDao,
+    private val userDao: UserDao,
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
 ) : PostRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
-        config = PagingConfig(pageSize = 5),
+        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
         remoteMediator = PostRemoteMediator(apiService, appDb, postDao, postRemoteKeyDao),
         pagingSourceFactory = postDao::pagingSource
     ).flow.map { pagingData ->
@@ -122,13 +125,32 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun saveWithAttachment(post: Post, file: File, type: AttachmentType) {
         try {
             val upload = upload(file)
-            val postWithAttachment = post.copy(attachment = Attachment(upload.id, type))
+            val postWithAttachment = post.copy(
+                attachment = Attachment(upload.id, type)
+                )
             save(postWithAttachment)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw WhoKnowsError
         }
+    }
+
+    override suspend fun getUserById(userId: Long) {
+        try {
+            val response = apiService.getUserById(userId)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val user = response.body() ?: throw ApiError(response.code(), response.message())
+            userDao.insert(UserEntity.fromDto(user))
+
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+
     }
 
 }

@@ -30,7 +30,6 @@ private val empty = Post(
     authorJob = "",
     content = "",
     published = "",
-    coords = null,
     link = "",
     attachment = null
 )

@@ -52,7 +52,7 @@ class UserPreviewViewHolder(
                     .error(R.drawable.twotone_error_outline_24)
                     .into(avatar)
                 else -> Glide.with(avatar)
-                    .load("${BuildConfig.BASE_URL}/${userPreview.avatar}")
+                    .load("${userPreview.avatar}")
                     .circleCrop()
                     .placeholder(R.drawable.avatar1)
                     .error(R.drawable.twotone_error_outline_24)
@@ -70,7 +70,7 @@ class UserPreviewDiffCallback : DiffUtil.ItemCallback<UserPreview>() {
         if (oldItem::class != newItem::class) {
             return false
         }
-        return oldItem.id == newItem.id
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: UserPreview, newItem: UserPreview): Boolean {

@@ -6,18 +6,21 @@ import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.Coordinates
 
 data class AttachmentEmbeddable (
+    @SerializedName("url")
     var url: String,
-    var type: AttachmentType,
+    @SerializedName("type")
+    var typeA: AttachmentType,
 ) {
-    fun toDto () = Attachment (url, type)
+    fun toDto () = Attachment (url, typeA)
 
     companion object {
         fun fromDto(dto: Attachment?) = dto?.let {
-            AttachmentEmbeddable(it.url, it.type)
+            AttachmentEmbeddable(it.url, it.typeA)
         }
     }
 }
 data class CoordsEmbeddable (
+    @SerializedName("lat")
     var lat: String,
     @SerializedName("long")
     var longi: String,

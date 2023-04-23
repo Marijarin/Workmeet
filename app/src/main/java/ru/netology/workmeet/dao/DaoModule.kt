@@ -19,7 +19,10 @@ object DaoModule {
     fun provideEventRemoteKeyDao(db: AppDb): EventRemoteKeyDao = db.eventRemoteKeyDao()
     @Provides
     fun provideJobDao(db: AppDb): JobDao = db.jobDao()
-       @Provides
+    @Provides
     fun provideUserDao(db: AppDb): UserDao = db.userDao()
+
+    @Provides
+    fun provideWallRemoteKeyDao(db: AppDb): WallRemoteKeyDao = db.wallRemoteKeyDao()
 
 }

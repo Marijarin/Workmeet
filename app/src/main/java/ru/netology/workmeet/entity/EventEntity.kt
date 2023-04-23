@@ -23,12 +23,12 @@ data class EventEntity(
     val speakerIds: List<Long>,
     val participantsIds: List<Long>,
     val participatedByMe: Boolean = false,
-    @Embedded(prefix = "attachment_")
+    @Embedded
     var attachment: AttachmentEmbeddable?,
     val link: String,
     val ownedByMe: Boolean = false,
-    var users: List<UserPreview>,
-){
+    val users: Map<String, UserPreview>,
+) {
     fun toDto() = Event(
         id,
         authorId = authorId,
@@ -50,6 +50,7 @@ data class EventEntity(
         ownedByMe,
         users,
     )
+
     companion object {
         fun fromDto(dto: Event) =
             EventEntity(
@@ -76,4 +77,5 @@ data class EventEntity(
     }
 
 }
+
 fun List<Event>.toEntity(): List<EventEntity> = map(EventEntity::fromDto)

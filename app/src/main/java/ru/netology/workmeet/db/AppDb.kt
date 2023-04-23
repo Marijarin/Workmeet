@@ -22,5 +22,6 @@ abstract class AppDb : RoomDatabase() {
     abstract fun eventRemoteKeyDao(): EventRemoteKeyDao
     abstract fun jobDao(): JobDao
     abstract fun userDao(): UserDao
+    abstract fun wallRemoteKeyDao(): WallRemoteKeyDao
 
 }

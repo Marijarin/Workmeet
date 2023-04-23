@@ -12,9 +12,9 @@ import ru.netology.workmeet.entity.UserEntity
 interface UserDao {
     @Query("SELECT * FROM UserEntity ORDER BY id DESC")
     fun getAll(): Flow<List<UserEntity>>
-    @Query("SELECT * FROM UserEntity ORDER BY id DESC")
-    fun pagingSource(): PagingSource<Int, UserEntity>
 
+    @Query("SELECT * FROM UserEntity WHERE id = :userId")
+    suspend fun getUserById(userId: Long): UserEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: UserEntity)
 

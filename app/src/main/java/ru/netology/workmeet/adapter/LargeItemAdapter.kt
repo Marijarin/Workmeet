@@ -1,6 +1,7 @@
 package ru.netology.workmeet.adapter
 
 
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -9,22 +10,20 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.netology.workmeet.BuildConfig
 import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.CardEventBinding
-import ru.netology.workmeet.databinding.CardJobBinding
 import ru.netology.workmeet.databinding.CardPostBinding
 import ru.netology.workmeet.dto.Event
 import ru.netology.workmeet.dto.FeedItem
-import ru.netology.workmeet.dto.Job
 import ru.netology.workmeet.dto.Post
+import java.util.*
+
 
 interface OnInteractionListener {
     fun onLike(item: FeedItem) {}
     fun onEdit(item: FeedItem) {}
     fun onRemove(item: FeedItem) {}
-    fun onImage(item: FeedItem) {}
     fun onAuth() {}
 }
 class LargeItemAdapter(
@@ -64,6 +63,15 @@ class PostViewHolder(
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
+
+    private fun toDate(published: String): String{
+
+        val parser =  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        val formattedDate = formatter.format(parser.parse(published)?: "")
+
+        return formattedDate
+    }
     fun bind(post: Post) {
 
         val childAdapter = UserPreviewAdapter(object : OnUserInteractionListener {
@@ -73,7 +81,7 @@ class PostViewHolder(
         binding.apply {
             author.text = post.author
             authorJob.text = post.authorJob ?: itemView.context.getText(R.string.default_job)
-            published.text = post.published
+            published.text = toDate(post.published)
             content.text = post.content
             like.isChecked = post.likedByMe
             likeOwners.adapter = childAdapter
@@ -84,7 +92,7 @@ class PostViewHolder(
                     .error(R.drawable.twotone_error_outline_24)
                     .into(avatar)
                 else -> Glide.with(avatar)
-                    .load("${BuildConfig.BASE_URL}/${post.authorAvatar}")
+                    .load("${post.authorAvatar}")
                     .circleCrop()
                     .placeholder(R.drawable.avatar3)
                     .error(R.drawable.twotone_error_outline_24)
@@ -94,7 +102,7 @@ class PostViewHolder(
             attachment.let {
                 if (post.attachment != null) {
                     Glide.with(attachment)
-                        .load("${BuildConfig.BASE_URL}/media/${post.attachment.url}")
+                        .load(post.attachment.url)
                         .placeholder(R.drawable.baseline_attachment_24)
                         .error(R.drawable.twotone_error_outline_24)
                         .timeout(10_000)
@@ -163,7 +171,7 @@ class EventViewHolder(
                     .error(R.drawable.twotone_error_outline_24)
                     .into(avatar)
                 else -> Glide.with(avatar)
-                    .load("${BuildConfig.BASE_URL}/${event.authorAvatar}")
+                    .load("${event.authorAvatar}")
                     .circleCrop()
                     .placeholder(R.drawable.avatar3)
                     .error(R.drawable.twotone_error_outline_24)
@@ -174,7 +182,7 @@ class EventViewHolder(
             attachment.let {
                 if (event.attachment != null) {
                     Glide.with(attachment)
-                        .load("${BuildConfig.BASE_URL}/media/${event.attachment.url}")
+                        .load(event.attachment.url)
                         .placeholder(R.drawable.baseline_attachment_24)
                         .error(R.drawable.twotone_error_outline_24)
                         .timeout(10_000)

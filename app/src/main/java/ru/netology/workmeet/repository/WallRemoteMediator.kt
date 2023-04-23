@@ -7,34 +7,33 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.PostDao
-import ru.netology.workmeet.dao.PostRemoteKeyDao
+import ru.netology.workmeet.dao.WallRemoteKeyDao
 import ru.netology.workmeet.db.AppDb
-import ru.netology.workmeet.entity.KeyType
-import ru.netology.workmeet.entity.PostEntity
-import ru.netology.workmeet.entity.PostRemoteKeyEntity
-import ru.netology.workmeet.entity.toEntity
+import ru.netology.workmeet.entity.*
 import ru.netology.workmeet.error.ApiError
 
 @OptIn(ExperimentalPagingApi::class)
-class PostRemoteMediator (private val service: ApiService,
+class WallRemoteMediator (private val service: ApiService,
                           private val db: AppDb,
                           private val postDao: PostDao,
-                          private val postRemoteKeyDao: PostRemoteKeyDao,
-) : RemoteMediator<Int, PostEntity>() {
+                          private val wallRemoteKeyDao: WallRemoteKeyDao,
+                          private val authorId: Long
+): RemoteMediator<Int, PostEntity>(){
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PostEntity>
     ): MediatorResult {
+
         try {
             val response = when (loadType) {
-                LoadType.REFRESH -> service.getLatestP(state.config.initialLoadSize)
+                LoadType.REFRESH -> service.getUserWallLatestP(authorId, state.config.initialLoadSize)
                 LoadType.PREPEND -> {
-                    val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
-                    service.getAfterP(id, state.config.pageSize)
+                    val id = wallRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                    service.getUserWallAfterP(authorId, id, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
-                    val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
-                    service.getBeforeP(id, state.config.pageSize)
+                    val id = wallRemoteKeyDao.min() ?: return MediatorResult.Success(false)
+                    service.getUserWallBeforeP(authorId, id, state.config.pageSize)
                 }
             }
 
@@ -50,14 +49,13 @@ class PostRemoteMediator (private val service: ApiService,
                 when (loadType) {
                     LoadType.REFRESH -> {
                         postDao.removeAll()
-
-                        postRemoteKeyDao.insert(
+                        wallRemoteKeyDao.insert(
                             listOf(
-                                PostRemoteKeyEntity(
+                                WallRemoteKeyEntity(
                                     type = KeyType.AFTER,
                                     id = body.first().id,
                                 ),
-                                PostRemoteKeyEntity(
+                                WallRemoteKeyEntity(
                                     type = KeyType.BEFORE,
                                     id = body.last().id,
                                 ),
@@ -66,16 +64,16 @@ class PostRemoteMediator (private val service: ApiService,
 
                     }
                     LoadType.PREPEND -> {
-                        postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(
+                        wallRemoteKeyDao.insert(
+                            WallRemoteKeyEntity(
                                 type = KeyType.AFTER,
                                 id = body.first().id,
                             )
                         )
                     }
                     LoadType.APPEND -> {
-                        postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(
+                        wallRemoteKeyDao.insert(
+                            WallRemoteKeyEntity(
                                 type = KeyType.BEFORE,
                                 id = body.last().id,
                             )
@@ -89,4 +87,6 @@ class PostRemoteMediator (private val service: ApiService,
             return MediatorResult.Error(e)
         }
     }
+
+
 }

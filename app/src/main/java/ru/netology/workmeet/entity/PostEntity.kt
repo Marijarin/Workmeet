@@ -4,6 +4,8 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import ru.netology.workmeet.dto.Attachment
+import ru.netology.workmeet.dto.Coordinates
 import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.dto.UserPreview
 
@@ -13,7 +15,7 @@ import ru.netology.workmeet.dto.UserPreview
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val authorId: Long = 0L,
+    val authorId: Long,
     val author: String,
     val authorAvatar: String?,
     val authorJob: String?,
@@ -26,10 +28,10 @@ data class PostEntity(
     val mentionIds: List<Long> = emptyList(),
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
-    @Embedded(prefix = "attachment_")
+    @Embedded
     var attachment: AttachmentEmbeddable?,
     val ownedByMe: Boolean = false,
-    var users: List<UserPreview>,
+    val users: Map<String, UserPreview>,
 ) {
     fun toDto() = Post(
         id,

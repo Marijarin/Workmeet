@@ -162,7 +162,7 @@
         <ImageView
             android:id="@+id/attachment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/attachment_height"
             android:layout_marginBottom="@dimen/common_spacing"
             android:contentDescription="@string/post_attachment"
             app:layout_constraintStart_toStartOf="parent"

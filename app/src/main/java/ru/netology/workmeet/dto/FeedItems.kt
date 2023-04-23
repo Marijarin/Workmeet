@@ -16,7 +16,7 @@ data class Post(
     val authorJob: String?,
     val content: String,
     val published: String,
-    val coords: Coordinates?,
+    val coords: Coordinates? = null,
     val link: String?,
     val likeOwnerIds: List<Long> = emptyList(),
     val mentionIds: List<Long> = emptyList(),
@@ -24,7 +24,7 @@ data class Post(
     val likedByMe: Boolean = false,
     val attachment: Attachment?,
     val ownedByMe: Boolean = false,
-    val users:List<UserPreview> = emptyList(),
+    val users:Map<String, UserPreview> = emptyMap(),
 
     ): FeedItem
 
@@ -47,7 +47,7 @@ data class Event(
     val attachment: Attachment?,
     val link: String,
     val ownedByMe: Boolean = false,
-    val users: List<UserPreview> = emptyList(),
+    val users: Map<String, UserPreview> = emptyMap(),
     ): FeedItem
 
 enum class EventType{
@@ -71,28 +71,24 @@ data class User(
 
 )
 data class Attachment(
+    @SerializedName("url")
     val url: String,
-    val type: AttachmentType
+    @SerializedName("type")
+    val typeA: AttachmentType
 )
 enum class AttachmentType {
     IMAGE, VIDEO, AUDIO
 }
 
 data class Coordinates(
+    @SerializedName("lat")
     val lat: String,
-    @SerializedName("longi")
+    @SerializedName("long")
     val longi: String,
 )
 
 data class UserPreview(
-    val id: Long,
     val name: String,
     val avatar: String?,
-){
-    fun toJson(userPreview: UserPreview): String = Gson().toJson(userPreview)
-    companion object {
-        fun fromJson(value: String) = Gson().fromJson(value, UserPreview::class.java)
-    }
-
-}
+)
 

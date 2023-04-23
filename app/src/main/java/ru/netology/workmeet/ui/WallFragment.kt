@@ -123,6 +123,9 @@ class WallFragment : Fragment() {
                 })
 
         }
+        binding.toJobs.setOnClickListener {
+
+        }
 
         binding.fab.setOnClickListener {
             if (!authViewModel.authenticated) {

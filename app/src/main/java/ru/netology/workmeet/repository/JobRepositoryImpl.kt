@@ -19,9 +19,6 @@ class JobRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val jobDao: JobDao,
    ) : JobRepository {
-    /*private val _data = MutableStateFlow<List<Job?>>(emptyList())
-    override val data: Flow<List<Job?>>
-    get() = _data.asStateFlow()*/
 
     override val data: Flow<List<Job>> = jobDao.getAllJ()
         .map {

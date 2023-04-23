@@ -2,15 +2,12 @@ package ru.netology.workmeet.entity
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import ru.netology.workmeet.dto.AttachmentType
-import ru.netology.workmeet.dto.UserPreview
+import com.google.gson.reflect.TypeToken
+import ru.netology.workmeet.dto.*
 
 
 class Converters {
-    @TypeConverter
-    fun fromAttachmentType(value: AttachmentType) = value.name
-    @TypeConverter
-    fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)
+
     @TypeConverter
     fun listToJson(value: List<Long>?) = Gson().toJson(value)
 
@@ -18,16 +15,12 @@ class Converters {
     fun jsonToList(value: String) = Gson().fromJson(value, Array<Long>::class.java).toList()
 
     @TypeConverter
-    fun fromUserListToJson(value: List<UserPreview>): String {
-        val json = value.map { it.toJson(it) }
-        return Gson().toJson(json)
-    }
+    fun fromUserMapToJson(value: Map<String, UserPreview>)= Gson().toJson(value).toString()
+
     @TypeConverter
-    fun toUserListFromJson(value: String): List<UserPreview> {
-        val jsonSet = Gson().fromJson(value, Array<String>::class.java)
-        return jsonSet.map{
-            UserPreview.fromJson(it)
-        }
+    fun toUserMapFromJson(value: String): Map<String, UserPreview> {
+        val typeToken = object : TypeToken<Map<String, UserPreview>>() {}
+         return Gson().fromJson(value, typeToken.type)
     }
 
 }

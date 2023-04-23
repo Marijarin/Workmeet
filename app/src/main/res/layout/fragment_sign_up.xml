@@ -12,10 +12,11 @@
             android:layout_height="wrap_content"
             android:background="@color/md_theme_light_secondaryContainer"
             android:orientation="vertical"
+            android:layout_marginTop="@dimen/large_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintBottom_toBottomOf="parent"
+
             >
 
             <ImageView
@@ -24,7 +25,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/avatar"
-                android:src="@drawable/avatar3"
+                tools:srcCompat="@sample/posts.json/data/authorAvatar"
                  />
 
             <Button

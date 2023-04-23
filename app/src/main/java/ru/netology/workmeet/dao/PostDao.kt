@@ -9,6 +9,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, PostEntity>
 
+    @Query("SELECT * FROM PostEntity WHERE authorId = :authorId ORDER BY id DESC")
+    fun pagingSourceByAuthor(authorId: Long): PagingSource<Int, PostEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 

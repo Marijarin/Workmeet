@@ -9,6 +9,7 @@ android {
     namespace 'ru.netology.workmeet'
     compileSdk 33
 
+
     defaultConfig {
         applicationId "ru.netology.workmeet"
         minSdk 24
@@ -58,7 +59,7 @@ dependencies {
     def lifecycle_version = "2.5.1"
     def mdc_version = "1.6.1"
     def nav_version = "2.5.3"
-    def room_version = "2.4.3"
+    def room_version = "2.5.1"
     def play_services_base_version = "18.1.0"
     def glide_version = "4.14.1"
     def retrofit_version = "2.9.0"

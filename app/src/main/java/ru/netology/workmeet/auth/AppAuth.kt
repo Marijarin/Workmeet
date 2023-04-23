@@ -48,27 +48,30 @@ class AppAuth @Inject constructor(
 
     val state = _state.asStateFlow()
 
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface AppAuthEntryPoint{
+        fun getApiService(): ApiService
+    }
+
     @Synchronized
     fun setAuth(id: Long, token: String) {
-        prefs.edit {
+        _state.value = AuthState(id, token)
+        with(prefs.edit()) {
             putLong(ID_KEY, id)
             putString(TOKEN_KEY, token)
+            apply()
         }
-        _state.value = AuthState(id, token)
 
     }
 
     @Synchronized
     fun removeAuth() {
-        prefs.edit {
-            clear()
-        }
         _state.value = AuthState()
-    }
-    @InstallIn(SingletonComponent::class)
-    @EntryPoint
-    interface AppAuthEntryPoint{
-        fun getApiService(): ApiService
+        with(prefs.edit()) {
+            clear()
+            apply()
+        }
     }
 
     suspend fun updateUser(login: String, password: String) {

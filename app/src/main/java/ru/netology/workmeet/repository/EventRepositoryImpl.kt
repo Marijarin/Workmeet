@@ -151,7 +151,9 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun saveWithAttachment(event: Event, file: File, type: AttachmentType) {
         try {
             val upload = upload(file)
-            val eventWithAttachment = event.copy(attachment = Attachment(upload.id, type))
+            val eventWithAttachment = event.copy(
+                //attachment = Attachment(upload.id, type)
+                )
             save(eventWithAttachment)
         } catch (e: IOException) {
             throw NetworkError

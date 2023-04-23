@@ -14,6 +14,13 @@ data class EventRemoteKeyEntity(
     val type: KeyType,
     val id: Long
 )
+
+@Entity
+data class WallRemoteKeyEntity(
+    @PrimaryKey
+    val type: KeyType,
+    val id: Long
+)
 enum class KeyType {
     AFTER,
     BEFORE
