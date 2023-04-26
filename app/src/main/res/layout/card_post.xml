@@ -92,6 +92,15 @@
         app:layout_constraintBottom_toTopOf="@id/attachment"
         tools:text="@sample/posts.json/data/content" />
 
+    <VideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/attachment_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        />
+
     <ImageView
         android:id="@+id/attachment"
         android:layout_width="match_parent"
@@ -103,12 +112,51 @@
         app:layout_constraintTop_toBottomOf="@id/content"
         tools:srcCompat="@sample/posts.json/data/attachment" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/play"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/icon_button_min_size"
+        android:contentDescription="@string/description_play_button"
+        app:icon="@drawable/baseline_play_circle_filled_24"
+        app:iconSize="@dimen/button_margin"
+        app:layout_constraintBottom_toBottomOf="@id/video"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrierBottom"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pause"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginBottom="@dimen/icon_button_min_size"
+        android:contentDescription="@string/description_play_button"
+        app:icon="@drawable/baseline_pause_circle_24"
+        app:iconSize="@dimen/button_margin"
+        app:layout_constraintBottom_toBottomOf="@id/video"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrierBottom"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/videoGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="play, video"
+        />
+
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrierBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="content, attachment"
+        app:constraint_referenced_ids="video"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="96dp" />
 

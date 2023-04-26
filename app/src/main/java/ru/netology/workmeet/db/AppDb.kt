@@ -12,7 +12,8 @@ import ru.netology.workmeet.entity.*
         EventEntity::class,
         EventRemoteKeyEntity::class,
         JobEntity::class,
-        UserEntity::class],
+        UserEntity::class,
+        WallRemoteKeyEntity::class],
     version = 1, exportSchema = false
 )
 abstract class AppDb : RoomDatabase() {

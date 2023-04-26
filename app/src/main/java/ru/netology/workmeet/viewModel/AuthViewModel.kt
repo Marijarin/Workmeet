@@ -36,18 +36,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun registerUser(login: String, password: String, name: String) = viewModelScope.launch {
+     fun registerUser(login: String, password: String, name: String, file: File?) = viewModelScope.launch {
         try {
-            appAuth.registerUser(login, password, name)
-        } catch (e: Exception) {
-            println(e)
-            throw AppError.from(e)
-        }
-    }
-
-    fun registerWithPhoto(login: String, password: String, name: String, file: File) = viewModelScope.launch {
-        try {
-            appAuth.registerWithPhoto(login, password, name, file)
+            appAuth.registerUser(login, password, name, file)
         } catch (e: Exception) {
             println(e)
             throw AppError.from(e)

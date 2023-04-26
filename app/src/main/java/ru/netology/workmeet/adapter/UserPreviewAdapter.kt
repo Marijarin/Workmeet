@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.workmeet.BuildConfig
@@ -15,13 +16,20 @@ import ru.netology.workmeet.dto.*
 
 interface OnUserInteractionListener {
     fun onClick(user: UserPreview) {}
-    fun onAuth() {}
+
 }
 
 class UserPreviewAdapter(
+    usersData: Map<String, UserPreview>,
     private val onUserInteractionListener: OnUserInteractionListener,
     private val appAuth: AppAuth
-) : PagingDataAdapter<UserPreview, UserPreviewViewHolder>(UserPreviewDiffCallback()) {
+) : RecyclerView.Adapter<UserPreviewViewHolder>() {
+
+    private var usersList: List<UserPreview> = emptyList()
+
+    init{
+        this.usersList = usersData.values.toList()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserPreviewViewHolder {
         val binding =
@@ -29,10 +37,11 @@ class UserPreviewAdapter(
         return UserPreviewViewHolder(binding, onUserInteractionListener, appAuth)
     }
 
+    override fun getItemCount(): Int = usersList.size
+
     override fun onBindViewHolder(holder: UserPreviewViewHolder, position: Int) {
-        val userPreview = getItem(position)
-        if (userPreview != null) {
-            holder.bind(userPreview)
+        if (usersList.isNotEmpty()) {
+            holder.bind(usersList[position])
         }
 
     }
@@ -59,6 +68,7 @@ class UserPreviewViewHolder(
                     .timeout(10_000)
                     .into(avatar)
             }
+            avatar.setOnClickListener { onUserInteractionListener.onClick(userPreview) }
             name.text = userPreview.name
             name.isFocused != name.isGone
         }

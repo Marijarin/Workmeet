@@ -52,4 +52,6 @@
     <string name="description_add_video">Add video</string>
     <string name="description_add_audio">Add audio</string>
     <string name="description_mention">Mention a user</string>
+    <string name="description_play_button">Play</string>
+    <string name="tell_about_new_event_here">Tell about a new event here</string>
 </resources>

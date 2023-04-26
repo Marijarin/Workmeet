@@ -19,6 +19,7 @@ import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.model.PhotoModel
 import ru.netology.workmeet.repository.PostRepository
+import ru.netology.workmeet.ui.MediaLifecycleObserver
 import ru.netology.workmeet.util.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
@@ -44,6 +45,8 @@ class PostViewModel @Inject constructor(
     private val cached = repository
         .data
         .cachedIn(viewModelScope)
+
+    private val mediaObserver = MediaLifecycleObserver()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<FeedItem>> = appAuth.state.flatMapLatest { (myId, _) ->
@@ -73,23 +76,23 @@ class PostViewModel @Inject constructor(
         loadPosts()
     }
 
-    fun loadPosts() = viewModelScope.launch{
+    fun loadPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState.Loading
             _dataState.value = FeedModelState.Idle
-        } catch (e: Exception){
+        } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
         }
     }
 
-    fun save() = viewModelScope.launch{
+    fun save() = viewModelScope.launch {
         edited.value?.let {
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when(_photo.value){
-                        noPhoto ->  repository.save(it)
-                        else -> _photo.value?.file?.let{ file ->
+                    when (_photo.value) {
+                        noPhoto -> repository.save(it)
+                        else -> _photo.value?.file?.let { file ->
                             repository.saveWithAttachment(it, file, type = AttachmentType.IMAGE)
                         }
                     }
@@ -114,7 +117,7 @@ class PostViewModel @Inject constructor(
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun likeById(id: Long) = viewModelScope.launch{
+    fun likeById(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState.Refreshing
             repository.likeById(id)
@@ -123,7 +126,8 @@ class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState.Error
         }
     }
-    fun unlikeById(id: Long) = viewModelScope.launch{
+
+    fun unlikeById(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState.Refreshing
             repository.unlikeById(id)
@@ -133,7 +137,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun removeById(id: Long) = viewModelScope.launch{
+    fun removeById(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState.Refreshing
             repository.removeById(id)
@@ -146,6 +150,39 @@ class PostViewModel @Inject constructor(
     fun changePhoto(uri: Uri?, file: File?) {
         _photo.value = PhotoModel(uri, file)
     }
+    fun play(post: Post) {
+        when (post.attachment?.typeA) {
+            AttachmentType.AUDIO -> {
+                mediaObserver.apply {
+                    if (player != null && player!!.isPlaying) {
+                        player?.stop()
+                        player?.reset()
+                        player?.setDataSource(
+                            post.attachment.url
+                        )
+                    } else {
+                        player?.setDataSource(
+                            post.attachment.url
+                        )
+                    }
+                }.play()
+            }
+            AttachmentType.VIDEO -> {
+                   if (mediaObserver.player!!.isPlaying) {
+                        pause()
+                    }
+                }
+            AttachmentType.IMAGE -> Unit
+            else -> Unit
+        }
+    }
 
-
+    fun pause() {
+        mediaObserver.apply {
+            if (player != null) {
+                player?.stop()
+                player?.reset()
+            }
+        }
+    }
 }

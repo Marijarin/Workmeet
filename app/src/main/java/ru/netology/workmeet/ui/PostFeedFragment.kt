@@ -22,12 +22,14 @@ import ru.netology.workmeet.adapter.ItemLoadingStateAdapter
 import ru.netology.workmeet.adapter.OnInteractionListener
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.FragmentPostFeedBinding
+import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.FeedItem
 import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.ui.NewPostFragment.Companion.textArg
 import ru.netology.workmeet.viewModel.AuthViewModel
 import ru.netology.workmeet.viewModel.PostViewModel
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,6 +85,23 @@ class PostFeedFragment : Fragment() {
             override fun onAuth() {
                 alertDialog?.show()
             }
+
+            override fun onUser() {
+                super.onUser()
+            }
+
+            override fun onPlay(item: FeedItem) {
+                viewModel.play(item as Post)
+                if (item.attachment?.typeA == AttachmentType.VIDEO){
+                    
+                }
+            }
+
+            override fun onPause() {
+                viewModel.pause()
+            }
+
+
         }, appAuth)
 
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(

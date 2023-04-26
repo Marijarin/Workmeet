@@ -1,7 +1,6 @@
 package ru.netology.workmeet.auth
 
 import android.content.Context
-import androidx.core.content.edit
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -90,32 +89,18 @@ class AppAuth @Inject constructor(
         }
     }
 
-    suspend fun registerUser(login: String, password: String, name: String) {
+    suspend fun registerUser(login: String, password: String, name: String, file: File?) {
         try {
-            val entryPoint = EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
-            val response =
-                entryPoint.getApiService().registerUser(login, password, name)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+            var fileData: MultipartBody.Part? = null
+            if (file!=null) {
+                fileData = MultipartBody.Part.createFormData(
+                    "file",
+                    file.name,
+                    file.asRequestBody()
+                )
             }
-            val newAuth = response.body() ?: throw ApiError(response.code(), response.message())
-            newAuth.token?.let { setAuth(newAuth.id, it) }
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw  WhoKnowsError
-        }
-    }
-
-    suspend fun registerWithPhoto(login: String, password: String, name: String, file: File) {
-        try {
-            val fileData = MultipartBody.Part.createFormData(
-                "file",
-                file.name,
-                file.asRequestBody()
-            )
             val entryPoint = EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
-            val response = entryPoint.getApiService().registerWithPhoto(
+            val response = entryPoint.getApiService().registerUser(
                 login.toRequestBody(),
                 password.toRequestBody(),
                 name.toRequestBody(),

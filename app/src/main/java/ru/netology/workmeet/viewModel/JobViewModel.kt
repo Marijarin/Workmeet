@@ -1,6 +1,9 @@
 package ru.netology.workmeet.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +15,7 @@ import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.repository.JobRepository
 import ru.netology.workmeet.util.SingleLiveEvent
 import javax.inject.Inject
+
 private val empty = Job(
     id = 0L,
     name ="",
@@ -23,7 +27,6 @@ private val empty = Job(
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val repository: JobRepository,
-    private val savedStateHandle: SavedStateHandle,
     appAuth: AppAuth
 ): ViewModel() {
     private val _data = MutableStateFlow(listOf<Job>())

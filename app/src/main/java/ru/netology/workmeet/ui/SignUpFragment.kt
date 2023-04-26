@@ -80,10 +80,11 @@ class SignUpFragment: Fragment() {
                     null -> authViewModel.registerUser(
                         binding.login.text.toString(),
                         binding.password.text.toString(),
-                        binding.username.text.toString()
+                        binding.username.text.toString(),
+                        null
                     )
                     else -> authViewModel.photo.value?.file?.let { file ->
-                        authViewModel.registerWithPhoto(
+                        authViewModel.registerUser(
                             binding.login.text.toString(),
                             binding.password.text.toString(),
                             binding.username.text.toString(),

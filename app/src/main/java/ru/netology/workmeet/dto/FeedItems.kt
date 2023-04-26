@@ -26,6 +26,7 @@ data class Post(
     val ownedByMe: Boolean = false,
     val users:Map<String, UserPreview> = emptyMap(),
 
+
     ): FeedItem
 
 data class Event(

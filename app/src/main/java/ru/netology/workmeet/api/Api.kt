@@ -18,21 +18,13 @@ interface ApiService {
         @Field("password") password: String
     ): Response<AuthState>
 
-    @FormUrlEncoded
-    @POST("users/registration")
-    suspend fun registerUser(
-        @Field("login") login: String,
-        @Field("password") password: String,
-        @Field("name") name: String
-    ): Response<AuthState>
-
     @Multipart
     @POST("users/registration")
-    suspend fun registerWithPhoto(
+    suspend fun registerUser(
         @Part("login") login: RequestBody,
         @Part("password") password: RequestBody,
         @Part("name") name: RequestBody,
-        @Part media: MultipartBody.Part,
+        @Part media: MultipartBody.Part?,
     ): Response<AuthState>
 
     /***** Media *****/

@@ -22,7 +22,7 @@
 
             <EditText
                 android:id="@+id/edit"
-                android:hint="Tell about new event here"
+                android:hint="@string/tell_about_new_event_here"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"

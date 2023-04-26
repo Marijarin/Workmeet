@@ -71,6 +71,19 @@ class EventViewModel @Inject constructor(
     val eventCreated: LiveData<Unit>
         get() = _eventCreated
 
+    init {
+        loadEvents()
+    }
+
+    fun loadEvents() = viewModelScope.launch {
+        try {
+            _dataState.value = FeedModelState.Loading
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState.Error
+        }
+    }
+
     fun save() = viewModelScope.launch{
         edited.value?.let {
             _eventCreated.value = Unit
