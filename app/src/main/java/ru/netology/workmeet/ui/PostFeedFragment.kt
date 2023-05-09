@@ -12,31 +12,29 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.workmeet.R
-import ru.netology.workmeet.adapter.LargeItemAdapter
 import ru.netology.workmeet.adapter.ItemLoadingStateAdapter
+import ru.netology.workmeet.adapter.LargeItemAdapter
 import ru.netology.workmeet.adapter.OnInteractionListener
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.FragmentPostFeedBinding
-import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.FeedItem
 import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.ui.NewPostFragment.Companion.textArg
 import ru.netology.workmeet.viewModel.AuthViewModel
 import ru.netology.workmeet.viewModel.PostViewModel
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class PostFeedFragment : Fragment() {
     @Inject
     lateinit var appAuth: AppAuth
-    private val viewModel: PostViewModel by viewModels()
+    private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +59,8 @@ class PostFeedFragment : Fragment() {
             builder.create()
         }
 
+        fun postToJson(post: Post) = Gson().toJson(post)
+
         val adapter = LargeItemAdapter(object : OnInteractionListener {
             override fun onEdit(item: FeedItem) {
                 if (item is Post && item.authorId == appAuth.state.value.id)
@@ -70,7 +70,7 @@ class PostFeedFragment : Fragment() {
 
             override fun onLike(item: FeedItem) {
                 if (item is Post) {
-                    if (!item.likedByMe) viewModel.likeById(item.id) else if (item.likedByMe) viewModel.unlikeById(
+                    if (!item.likedByMe) viewModel.likeById(item.id) else viewModel.unlikeById(
                         item.id
                     )
                 } else return
@@ -86,15 +86,16 @@ class PostFeedFragment : Fragment() {
                 alertDialog?.show()
             }
 
-            override fun onUser() {
-                super.onUser()
+            override fun onUser(item: FeedItem) {
+                if (item is Post && authViewModel.authenticated) {
+                    val json = postToJson(item)
+                    findNavController().navigate(R.id.action_postFeedFragment_to_wallFragment,
+                        Bundle().apply { textArg = json })
+                } else  alertDialog?.show()
             }
 
             override fun onPlay(item: FeedItem) {
-                viewModel.play(item as Post)
-                if (item.attachment?.typeA == AttachmentType.VIDEO){
-                    
-                }
+                viewModel.playAudio(item as Post)
             }
 
             override fun onPause() {
@@ -148,9 +149,9 @@ class PostFeedFragment : Fragment() {
             if (!authViewModel.authenticated) {
                 alertDialog?.show()
             }
-            setFragmentResultListener("signInClosed") { _, _ ->
+           //setFragmentResultListener("signInClosed") { _, _ ->
                 if (authViewModel.authenticated) findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
-            }
+           //}
         }
         return binding.root
     }

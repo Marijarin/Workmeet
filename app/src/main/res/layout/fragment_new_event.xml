@@ -69,6 +69,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/margin_fab"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -112,7 +113,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/description_add_audio"
-
             app:icon="@drawable/baseline_audio_file_24"
             app:iconSize="@dimen/icon_button_min_size"
             app:iconGravity="end|start"/>
@@ -123,7 +123,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/description_mention"
-
             app:icon="@drawable/baseline_person_add_alt_1_24"
             app:iconSize="@dimen/icon_button_min_size"
             app:iconGravity="end|start"/>

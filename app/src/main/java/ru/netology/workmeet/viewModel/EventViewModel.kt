@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
-import ru.netology.workmeet.model.PhotoModel
+import ru.netology.workmeet.model.MediaModel
 import ru.netology.workmeet.repository.EventRepository
 import ru.netology.workmeet.util.SingleLiveEvent
 import java.io.File
@@ -37,7 +37,7 @@ private val empty = Event(
     attachment = null
 )
 
-private val noPhoto = PhotoModel(null, null)
+private val noMedia = MediaModel(null, null)
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val repository: EventRepository,
@@ -62,9 +62,9 @@ class EventViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _photo = MutableLiveData(noPhoto)
-    val photo: LiveData<PhotoModel>
-        get() = _photo
+    private val _media = MutableLiveData(noMedia)
+    val media: LiveData<MediaModel>
+        get() = _media
 
     val edited = MutableLiveData(empty)
     private val _eventCreated = SingleLiveEvent<Unit>()
@@ -89,9 +89,9 @@ class EventViewModel @Inject constructor(
             _eventCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when(_photo.value){
-                        noPhoto ->  repository.save(it)
-                        else -> _photo.value?.file?.let{ file ->
+                    when(_media.value){
+                        noMedia ->  repository.save(it)
+                        else -> _media.value?.file?.let{ file ->
                             repository.saveWithAttachment(it, file, type = AttachmentType.IMAGE)
                         }
                     }
@@ -163,7 +163,7 @@ class EventViewModel @Inject constructor(
     }
 
     fun changePhoto(uri: Uri?, file: File?) {
-        _photo.value = PhotoModel(uri, file)
+        _media.value = MediaModel(uri, file)
     }
 
 

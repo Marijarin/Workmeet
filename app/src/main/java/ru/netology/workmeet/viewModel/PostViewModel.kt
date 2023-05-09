@@ -1,6 +1,7 @@
 package ru.netology.workmeet.viewModel
 
 import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
-import ru.netology.workmeet.model.PhotoModel
+import ru.netology.workmeet.model.MediaModel
 import ru.netology.workmeet.repository.PostRepository
 import ru.netology.workmeet.ui.MediaLifecycleObserver
 import ru.netology.workmeet.util.SingleLiveEvent
@@ -25,17 +26,16 @@ import java.io.File
 import javax.inject.Inject
 
 private val empty = Post(
-    id = 0L,
-    author = "",
-    authorAvatar = "",
-    authorJob = "",
-    content = "",
-    published = "",
-    link = "",
-    attachment = null
+    id = 0,
+    author = " ",
+    authorAvatar = " ",
+    authorJob = null,
+    content = "string",
+    published = "now",
+    link = null
 )
 
-private val noPhoto = PhotoModel(null, null)
+private val noMedia = MediaModel(null, null)
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
@@ -63,9 +63,9 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _photo = MutableLiveData(noPhoto)
-    val photo: LiveData<PhotoModel>
-        get() = _photo
+    private val _media = MutableLiveData(noMedia)
+    val media: LiveData<MediaModel>
+        get() = _media
 
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
@@ -82,28 +82,28 @@ class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+            e.printStackTrace()
         }
     }
 
-    fun save() = viewModelScope.launch {
+    fun save() =
         edited.value?.let {
-            _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when (_photo.value) {
-                        noPhoto -> repository.save(it)
-                        else -> _photo.value?.file?.let { file ->
-                            repository.saveWithAttachment(it, file, type = AttachmentType.IMAGE)
-                        }
-                    }
+                    repository.save(
+                        it, _media.value?.uri?.let { MediaUpload(it.toFile()) }
+                    )
+                    _postCreated.value = Unit
                     _dataState.value = FeedModelState.Idle
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState.Error
+                    e.printStackTrace()
                 }
+
             }
+            edited.value = empty
+            _media.value = noMedia
         }
-        edited.value = empty
-    }
 
     fun edit(post: Post) {
         edited.value = post
@@ -147,10 +147,11 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changePhoto(uri: Uri?, file: File?) {
-        _photo.value = PhotoModel(uri, file)
+    fun changeAttachment(uri: Uri?, file: File?) {
+        _media.value = MediaModel(uri, file)
     }
-    fun play(post: Post) {
+
+    fun playAudio(post: Post) {
         when (post.attachment?.typeA) {
             AttachmentType.AUDIO -> {
                 mediaObserver.apply {
@@ -167,12 +168,6 @@ class PostViewModel @Inject constructor(
                     }
                 }.play()
             }
-            AttachmentType.VIDEO -> {
-                   if (mediaObserver.player!!.isPlaying) {
-                        pause()
-                    }
-                }
-            AttachmentType.IMAGE -> Unit
             else -> Unit
         }
     }

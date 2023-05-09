@@ -6,7 +6,7 @@ import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.Coordinates
 
 data class AttachmentEmbeddable (
-    @SerializedName("url")
+    @SerializedName("id")
     var url: String,
     @SerializedName("type")
     var typeA: AttachmentType,

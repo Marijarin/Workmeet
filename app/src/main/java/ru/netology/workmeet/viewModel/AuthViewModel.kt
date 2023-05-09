@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.auth.AuthState
 import ru.netology.workmeet.error.AppError
-import ru.netology.workmeet.model.PhotoModel
+import ru.netology.workmeet.model.MediaModel
 import java.io.File
 import javax.inject.Inject
 
@@ -21,10 +21,10 @@ class AuthViewModel @Inject constructor(
     val authenticated: Boolean
         get() = appAuth.state.value.id != 0L
 
-    private val noPhoto = PhotoModel(null, null)
+    private val noPhoto = MediaModel(null, null)
 
     private val _photo = MutableLiveData(noPhoto)
-    val photo: LiveData<PhotoModel>
+    val photo: LiveData<MediaModel>
         get() = _photo
 
     fun updateUser(login: String, password: String) = viewModelScope.launch {
@@ -46,7 +46,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun changePhoto(uri: Uri?, file: File?) {
-        _photo.value = PhotoModel(uri, file)
+        _photo.value = MediaModel(uri, file)
     }
 
 }

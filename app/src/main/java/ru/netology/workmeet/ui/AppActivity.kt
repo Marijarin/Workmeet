@@ -83,6 +83,14 @@ class AppActivity : AppCompatActivity() {
                         textArg = text
                     }
                 )
+            intent.removeExtra(Intent.EXTRA_TEXT)
+            findNavController(R.id.nav_host_fragment)
+                .navigate(
+                    R.id.action_wallFragment_to_newPostFragment,
+                    Bundle().apply {
+                        textArg = text
+                    }
+                )
         }
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -99,6 +107,10 @@ class AppActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.bottomNavigation.setupWithNavController(navController)
 
+
+        authViewModel.data.observe(this) {
+            invalidateOptionsMenu()
+        }
 
         checkGoogleApiAvailability()
 
@@ -131,6 +143,9 @@ class AppActivity : AppCompatActivity() {
                 menuProvider = this
             })
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     private fun checkGoogleApiAvailability() {

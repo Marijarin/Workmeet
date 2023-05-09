@@ -29,9 +29,9 @@ import ru.netology.workmeet.viewModel.AuthViewModel
 import ru.netology.workmeet.viewModel.EventViewModel
 import javax.inject.Inject
 
-class EventFeedFragment: Fragment() {
+
     @AndroidEntryPoint
-    class PostFeedFragment : Fragment() {
+    class EventFeedFragment : Fragment() {
         @Inject
         lateinit var appAuth: AppAuth
         private val viewModel: EventViewModel by viewModels()
@@ -137,4 +137,3 @@ class EventFeedFragment: Fragment() {
             return binding.root
         }
     }
-}

@@ -54,4 +54,8 @@
     <string name="description_add_audio">Добавить аудио</string>
     <string name="description_mention">Упомянуть пользователя</string>
     <string name="description_play_button">Воспроизвести</string>
+    <string name="tell_about_new_event_here">Расскажите здесь о новом событии</string>
+    <string name="description_pause_button">Пауза</string>
+    <string name="user_page">стена</string>
+    <string name="now">наст.время</string>
 </resources>

@@ -15,7 +15,7 @@
             android:id="@+id/avatar"
             android:layout_width="@dimen/icon_button_min_size"
             android:layout_height="@dimen/icon_button_min_size"
-            android:layout_marginStart="-20dp"
+            android:layout_marginStart="@dimen/min_spacing"
             app:layout_constraintBottom_toTopOf="@id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

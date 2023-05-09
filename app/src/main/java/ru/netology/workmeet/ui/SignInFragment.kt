@@ -9,10 +9,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.workmeet.databinding.FragmentSignInBinding
 import ru.netology.workmeet.util.AndroidUtils
 import ru.netology.workmeet.viewModel.AuthViewModel
-
+@AndroidEntryPoint
 class SignInFragment: DialogFragment() {
     private val authViewModel: AuthViewModel by activityViewModels()
 

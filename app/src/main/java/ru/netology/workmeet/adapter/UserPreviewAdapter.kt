@@ -3,26 +3,17 @@ package ru.netology.workmeet.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.netology.workmeet.BuildConfig
 import ru.netology.workmeet.R
-import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.CardUserPreviewBinding
-import ru.netology.workmeet.dto.*
+import ru.netology.workmeet.dto.UserPreview
 
-interface OnUserInteractionListener {
-    fun onClick(user: UserPreview) {}
-
-}
 
 class UserPreviewAdapter(
     usersData: Map<String, UserPreview>,
-    private val onUserInteractionListener: OnUserInteractionListener,
-    private val appAuth: AppAuth
+
+
 ) : RecyclerView.Adapter<UserPreviewViewHolder>() {
 
     private var usersList: List<UserPreview> = emptyList()
@@ -34,7 +25,7 @@ class UserPreviewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserPreviewViewHolder {
         val binding =
             CardUserPreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return UserPreviewViewHolder(binding, onUserInteractionListener, appAuth)
+        return UserPreviewViewHolder(binding)
     }
 
     override fun getItemCount(): Int = usersList.size
@@ -49,8 +40,8 @@ class UserPreviewAdapter(
 
 class UserPreviewViewHolder(
     private val binding: CardUserPreviewBinding,
-    private val onUserInteractionListener: OnUserInteractionListener,
-    private val appAuth: AppAuth
+
+
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(userPreview: UserPreview) {
         binding.apply {
@@ -68,22 +59,13 @@ class UserPreviewViewHolder(
                     .timeout(10_000)
                     .into(avatar)
             }
-            avatar.setOnClickListener { onUserInteractionListener.onClick(userPreview) }
+            avatar.setOnClickListener {
+                //onInteractionListener.onUser()
+            }
             name.text = userPreview.name
             name.isFocused != name.isGone
         }
     }
 }
 
-class UserPreviewDiffCallback : DiffUtil.ItemCallback<UserPreview>() {
-    override fun areItemsTheSame(oldItem: UserPreview, newItem: UserPreview): Boolean {
-        if (oldItem::class != newItem::class) {
-            return false
-        }
-        return oldItem.name == newItem.name
-    }
 
-    override fun areContentsTheSame(oldItem: UserPreview, newItem: UserPreview): Boolean {
-        return oldItem == newItem
-    }
-}

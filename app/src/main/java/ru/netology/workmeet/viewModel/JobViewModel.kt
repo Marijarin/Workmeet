@@ -27,7 +27,7 @@ private val empty = Job(
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val repository: JobRepository,
-    appAuth: AppAuth
+
 ): ViewModel() {
     private val _data = MutableStateFlow(listOf<Job>())
     val data: Flow<List<Job>> = _data.asStateFlow()
@@ -70,12 +70,30 @@ class JobViewModel @Inject constructor(
         edited.value = job
     }
 
-    fun changeFinish(finish: String) {
-        val finishDate = finish.trim()
-        if (edited.value?.finish == finishDate) {
+    fun removeById(id: Long) = viewModelScope.launch {
+        try {
+            _dataState.value = FeedModelState.Refreshing
+            repository.removeById(id)
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState.Error
+        }
+    }
+    fun changeContent(name:String, position: String, start: String, finish: String, link: String){
+        val nameJ = name.trim()
+        val positionJ = position.trim()
+        val startJ = start.trim()
+        val finishJ = finish.trim()
+        val linkJ = link.trim()
+        if (edited.value?.name == nameJ
+            && edited.value?.position == positionJ
+            && edited.value?.start == startJ
+            && edited.value?.finish == finishJ
+            && edited.value?.link == linkJ
+        ) {
             return
         }
-        edited.value = edited.value?.copy(finish = finishDate)
+        edited.value = edited.value?.copy(name = nameJ, position = positionJ, start = startJ, finish = finishJ, link = linkJ)
     }
 
 }

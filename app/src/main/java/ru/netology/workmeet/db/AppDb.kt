@@ -13,7 +13,8 @@ import ru.netology.workmeet.entity.*
         EventRemoteKeyEntity::class,
         JobEntity::class,
         UserEntity::class,
-        WallRemoteKeyEntity::class],
+        WallRemoteKeyEntity::class,
+        MyWallRemoteKeyEntity::class],
     version = 1, exportSchema = false
 )
 abstract class AppDb : RoomDatabase() {
@@ -24,5 +25,6 @@ abstract class AppDb : RoomDatabase() {
     abstract fun jobDao(): JobDao
     abstract fun userDao(): UserDao
     abstract fun wallRemoteKeyDao(): WallRemoteKeyDao
+    abstract fun myWallRemoteKeyDao(): MyWallRemoteKeyDao
 
 }

@@ -132,9 +132,8 @@
         style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:layout_marginBottom="@dimen/icon_button_min_size"
-        android:contentDescription="@string/description_play_button"
+        android:layout_marginBottom="@dimen/icon_min_size"
+        android:contentDescription="@string/description_pause_button"
         app:icon="@drawable/baseline_pause_circle_24"
         app:iconSize="@dimen/button_margin"
         app:layout_constraintBottom_toBottomOf="@id/video"
@@ -143,20 +142,12 @@
         app:layout_constraintBottom_toTopOf="@id/barrierBottom"
         />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/videoGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="play, video"
-        />
-
-    <androidx.constraintlayout.widget.Barrier
+       <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrierBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="video"
+        app:constraint_referenced_ids="attachment, content"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="96dp" />
 

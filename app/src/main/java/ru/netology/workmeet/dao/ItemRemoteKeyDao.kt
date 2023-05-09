@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.netology.workmeet.entity.EventRemoteKeyEntity
+import ru.netology.workmeet.entity.MyWallRemoteKeyEntity
 import ru.netology.workmeet.entity.PostRemoteKeyEntity
 import ru.netology.workmeet.entity.WallRemoteKeyEntity
 
@@ -39,10 +40,10 @@ interface EventRemoteKeyDao {
     suspend fun min(): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(eventRemoteKeyEntity: EventRemoteKeyEntity)
+    suspend fun insert(key: EventRemoteKeyEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(eventRemoteKeyEntity: List<EventRemoteKeyEntity>)
+    suspend fun insert(keys: List<EventRemoteKeyEntity>)
 
     @Query("DELETE FROM EventRemoteKeyEntity")
     suspend fun clear()
@@ -66,5 +67,24 @@ interface WallRemoteKeyDao {
     suspend fun insert(keys: List<WallRemoteKeyEntity>)
 
     @Query("DELETE FROM WallRemoteKeyEntity")
+    suspend fun clear()
+}
+@Dao
+interface MyWallRemoteKeyDao {
+    @Query("SELECT COUNT(*) == 0 FROM MyWallRemoteKeyEntity")
+    suspend fun isEmpty(): Boolean
+
+    @Query(" SELECT max('key') FROM MyWallRemoteKeyEntity")
+    suspend fun max(): Long?
+
+    @Query(" SELECT min('key') FROM MyWallRemoteKeyEntity")
+    suspend fun min(): Long?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(key: MyWallRemoteKeyEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(keys: List<MyWallRemoteKeyEntity>)
+
+    @Query("DELETE FROM MyWallRemoteKeyEntity")
     suspend fun clear()
 }

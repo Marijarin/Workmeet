@@ -11,14 +11,16 @@ import ru.netology.workmeet.dao.WallRemoteKeyDao
 import ru.netology.workmeet.db.AppDb
 import ru.netology.workmeet.entity.*
 import ru.netology.workmeet.error.ApiError
+import kotlin.properties.Delegates
 
 @OptIn(ExperimentalPagingApi::class)
-class WallRemoteMediator (private val service: ApiService,
-                          private val db: AppDb,
-                          private val postDao: PostDao,
-                          private val wallRemoteKeyDao: WallRemoteKeyDao,
-                          private val authorId: Long
-): RemoteMediator<Int, PostEntity>(){
+class WallRemoteMediator(
+    private val service: ApiService,
+    private val db: AppDb,
+    private val postDao: PostDao,
+    private val wallRemoteKeyDao: WallRemoteKeyDao,
+    private val authorId: Long
+) : RemoteMediator<Int, PostEntity>() {
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PostEntity>
@@ -26,13 +28,16 @@ class WallRemoteMediator (private val service: ApiService,
 
         try {
             val response = when (loadType) {
-                LoadType.REFRESH -> service.getUserWallLatestP(authorId, state.config.initialLoadSize)
+                LoadType.REFRESH -> service.getUserWallLatestP(
+                    authorId,
+                    state.config.initialLoadSize
+                )
                 LoadType.PREPEND -> {
-                    val id = wallRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                    val id = wallRemoteKeyDao.max() ?: return MediatorResult.Success(true)
                     service.getUserWallAfterP(authorId, id, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
-                    val id = wallRemoteKeyDao.min() ?: return MediatorResult.Success(false)
+                    val id = wallRemoteKeyDao.min() ?: return MediatorResult.Success(true)
                     service.getUserWallBeforeP(authorId, id, state.config.pageSize)
                 }
             }

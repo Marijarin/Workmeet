@@ -14,13 +14,14 @@ import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.FragmentNewEventBinding
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.util.AndroidUtils
 import ru.netology.workmeet.util.StringArg
 import ru.netology.workmeet.viewModel.EventViewModel
-
+@AndroidEntryPoint
 class NewEventFragment: Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
@@ -96,7 +97,7 @@ class NewEventFragment: Fragment() {
             viewModel.changePhoto(null, null)
         }
 
-        viewModel.photo.observe(viewLifecycleOwner) {
+        viewModel.media.observe(viewLifecycleOwner) {
             binding.photo.setImageURI(it.uri)
             binding.photoContainer.isVisible = it.uri != null
         }

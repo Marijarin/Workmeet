@@ -130,19 +130,19 @@ interface ApiService {
     suspend fun getMyWall(): Response<List<Post>>
 
     @GET("my/wall/{post_id}/before")
-    suspend fun getMyBeforeP(
+    suspend fun getMyWallBeforeP(
         @Path("post_id") id: Long,
         @Query("count") count: Int
     ): Response<List<Post>>
 
     @GET("my/wall/{post_id}/after")
-    suspend fun getMyAfterP(
+    suspend fun getMyWallAfterP(
         @Path("post_id") id: Long,
         @Query("count") count: Int
     ): Response<List<Post>>
 
     @GET("my/wall/latest")
-    suspend fun getMyLatestP(@Query("count") count: Int): Response<List<Post>>
+    suspend fun getMyWallLatestP(@Query("count") count: Int): Response<List<Post>>
 
     /***** User's Wall *****/
 

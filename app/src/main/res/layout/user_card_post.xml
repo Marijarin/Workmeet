@@ -55,10 +55,19 @@
             app:layout_constraintBottom_toTopOf="@id/attachment"
             tools:text="@sample/posts.json/data/content" />
 
+        <VideoView
+            android:id="@+id/video"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/attachment_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content"
+            />
+
         <ImageView
             android:id="@+id/attachment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/attachment_height"
             android:layout_marginBottom="@dimen/common_spacing"
             android:contentDescription="@string/post_attachment"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,26 +76,67 @@
             tools:srcCompat="@sample/posts.json/data/attachment" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/play"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/icon_button_min_size"
+            android:contentDescription="@string/description_play_button"
+            app:icon="@drawable/baseline_play_circle_filled_24"
+            app:iconSize="@dimen/button_margin"
+            app:layout_constraintBottom_toBottomOf="@id/video"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/barrierBottom"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pause"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/icon_min_size"
+            android:contentDescription="@string/description_pause_button"
+            app:icon="@drawable/baseline_pause_circle_24"
+            app:iconSize="@dimen/button_margin"
+            app:layout_constraintBottom_toBottomOf="@id/video"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/barrierBottom"
+            />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrierBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="attachment, content"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="96dp" />
+
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checkable="true"
             android:contentDescription="@string/description_post_likes"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/attachment"
+            app:layout_constraintTop_toBottomOf="@id/barrierBottom"
             app:icon="@drawable/baseline_favorite_border_24"
             tools:text="@sample/posts.json/data/likes"
             style="@style/Widget.AppTheme.Button.Like"
             />
-        <ImageView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/likeOwners"
-            android:layout_width="@dimen/icon_button_min_size"
-            android:layout_height="@dimen/icon_button_min_size"
-            android:contentDescription="@string/description_owners_likes"
-            app:layout_constraintTop_toBottomOf="@id/attachment"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/like"
-            tools:srcCompat="@sample/posts.json/data/likeOwners"
-            />
+            app:layout_constraintTop_toBottomOf="@id/barrierBottom"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_user_preview" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

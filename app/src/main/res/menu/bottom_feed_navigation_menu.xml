@@ -14,7 +14,7 @@
         android:id="@+id/wallFragment"
         android:enabled="true"
         android:icon="@drawable/baseline_perm_contact_calendar_24"
-        android:title="@string/my_page"
+        android:title="@string/user_page"
         />
 
 </menu>

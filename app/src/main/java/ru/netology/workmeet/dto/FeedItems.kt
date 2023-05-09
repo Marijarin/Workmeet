@@ -22,7 +22,7 @@ data class Post(
     val mentionIds: List<Long> = emptyList(),
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
-    val attachment: Attachment?,
+    val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
     val users:Map<String, UserPreview> = emptyMap(),
 
@@ -45,7 +45,7 @@ data class Event(
     val speakerIds: List<Long> = emptyList(),
     val participantsIds: List<Long> = emptyList(),
     val participatedByMe: Boolean = false,
-    val attachment: Attachment?,
+    val attachment: Attachment? = null,
     val link: String,
     val ownedByMe: Boolean = false,
     val users: Map<String, UserPreview> = emptyMap(),
@@ -65,12 +65,12 @@ data class Job(
 
 ): FeedItem
 data class User(
-    val id: Long,
+    var id: Long,
     val avatar: String?,
     val login: String,
     val name: String,
 
-)
+    )
 data class Attachment(
     @SerializedName("url")
     val url: String,

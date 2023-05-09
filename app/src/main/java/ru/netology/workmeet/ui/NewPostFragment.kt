@@ -1,20 +1,22 @@
 package ru.netology.workmeet.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.FragmentNewPostBinding
 import ru.netology.workmeet.model.FeedModelState
@@ -22,11 +24,14 @@ import ru.netology.workmeet.util.AndroidUtils
 import ru.netology.workmeet.util.StringArg
 import ru.netology.workmeet.viewModel.PostViewModel
 
-class NewPostFragment: Fragment() {
+@AndroidEntryPoint
+class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
-    private val viewModel: PostViewModel by viewModels()
+
+    private val viewModel: PostViewModel by activityViewModels()
+    private var fragmentBinding: FragmentNewPostBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,9 +43,12 @@ class NewPostFragment: Fragment() {
             container,
             false
         )
+        fragmentBinding = binding
 
         arguments?.textArg
             ?.let(binding.edit::setText)
+
+        binding.edit.requestFocus()
 
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -64,10 +72,23 @@ class NewPostFragment: Fragment() {
                     }
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
-                        viewModel.changePhoto(uri, uri?.toFile())
+                        viewModel.changeAttachment(uri, uri?.toFile())
                     }
                 }
             }
+        val pickAudioLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when (it.resultCode) {
+                Activity.RESULT_CANCELED -> {
+                    Snackbar
+                        .make(binding.root, R.string.error_loading, Snackbar.LENGTH_SHORT)
+                        .show()
+                }
+                Activity.RESULT_OK -> {
+                    val uri: Uri? = it.data?.data
+                    viewModel.changeAttachment(uri, uri?.toFile())
+                }
+            }
+        }
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)
@@ -94,16 +115,23 @@ class NewPostFragment: Fragment() {
         }
 
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null, null)
+            viewModel.changeAttachment(null, null)
         }
 
-        viewModel.photo.observe(viewLifecycleOwner) {
+        binding.addAudio.setOnClickListener {
+            val intent = Intent().apply {
+                action = Intent.ACTION_GET_CONTENT
+            }.setDataAndTypeAndNormalize(Uri.parse(viewModel.media.value?.file.toString()),"audio/*" )
+            pickAudioLauncher.launch(intent)
+        }
+
+
+        viewModel.media.observe(viewLifecycleOwner) {
             binding.photo.setImageURI(it.uri)
             binding.photoContainer.isVisible = it.uri != null
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
             findNavController().navigateUp()
         }
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -113,11 +141,11 @@ class NewPostFragment: Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.save -> {
-
-                        viewModel.changeContent(binding.edit.text.toString())
+                    R.id.save ->  { fragmentBinding?.let {
+                        viewModel.changeContent(it.edit.text.toString())
                         viewModel.save()
                         AndroidUtils.hideKeyboard(requireView())
+                    }
                         true
                     }
 
@@ -128,5 +156,9 @@ class NewPostFragment: Fragment() {
         }, viewLifecycleOwner)
 
         return binding.root
+    }
+    override fun onDestroyView() {
+        fragmentBinding = null
+        super.onDestroyView()
     }
 }
