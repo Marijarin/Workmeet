@@ -43,14 +43,30 @@ class JobRepositoryImpl @Inject constructor(
             throw WhoKnowsError
         }
     }
-    override suspend fun save(job: Job, id: Long) {
+
+    override suspend fun getMyJobs(myId: Long) {
+        try{
+            val response = apiService.getAllMyJ()
+            if(!response.isSuccessful){
+                throw Error(response.message())
+            }
+            val myJobs = response.body() ?: throw Error(response.message())
+            jobDao.insert(myJobs.toEntity(myId))
+        } catch (e: IOException){
+            throw NetworkError
+        } catch (e: Exception){
+            throw WhoKnowsError
+        }
+    }
+
+    override suspend fun save(job: Job, myId: Long) {
         try {
             val response = apiService.saveJ(job)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val newJob = response.body() ?: throw ApiError(response.code(), response.message())
-            jobDao.insert(JobEntity.fromDto(newJob, id))
+            jobDao.insert(JobEntity.fromDto(newJob, myId))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

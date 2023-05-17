@@ -6,39 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.NewJobFragment">
 
-    <EditText
-        android:id="@+id/start"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Start date   "
-        android:layout_marginStart="@dimen/common_spacing"
-        android:textSize="@dimen/text_size_large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
 
     <Button
-        android:id="@+id/interval"
+        android:id="@+id/selectRange"
         style="@style/Widget.AppTheme.Menu.Button"
-        android:layout_width="32dp"
-        android:layout_height="@dimen/common_spacing"
-        android:layout_margin="@dimen/common_spacing"
-        app:icon="@drawable/baseline_grade_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/start" />
-
-    <EditText
-        android:id="@+id/finish"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Finish date"
-        android:textSize="@dimen/text_size_large"
         android:layout_margin="@dimen/common_spacing"
+        android:maxLines="2"
+        android:text="@string/select_interval"
+        app:icon="@drawable/baseline_calendar_month_24"
+        app:iconSize="@dimen/icon_button_min_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/interval"
-         />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+        <EditText
         android:id="@+id/position"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,9 +28,8 @@
         android:hint="Your position"
         android:textSize="@dimen/text_size_large"
         app:layout_constraintBottom_toTopOf="@id/name"
-        app:layout_constraintStart_toEndOf="@id/start"
+        app:layout_constraintStart_toEndOf="@id/selectRange"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
@@ -61,7 +42,8 @@
         app:layout_constraintBottom_toTopOf="@id/link"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toEndOf="@id/selectRange"
         app:layout_constraintTop_toBottomOf="@id/position"
          />
 
@@ -72,8 +54,9 @@
         android:layout_marginStart="@dimen/common_spacing"
         android:hint="Company website       "
         android:textSize="@dimen/text_size_large"
-        app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintStart_toEndOf="@id/selectRange"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

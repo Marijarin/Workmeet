@@ -12,32 +12,13 @@
         android:padding="@dimen/common_spacing">
 
         <TextView
-            android:id="@+id/start"
+            android:id="@+id/range"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@sample/jobs.json/data/start" />
-
-        <Button
-            android:id="@+id/interval"
-            style="@style/Widget.AppTheme.Menu.Button"
-            android:layout_width="32dp"
-            android:layout_height="@dimen/common_spacing"
-            android:layout_margin="@dimen/common_spacing"
-            app:icon="@drawable/baseline_grade_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/start" />
-
-        <TextView
-            android:id="@+id/finish"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/common_spacing"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/interval"
-            tools:text="@sample/jobs.json/data/finish" />
+            tools:text="@sample/jobs.json/data/start"/>
 
         <TextView
             android:id="@+id/position"
@@ -48,7 +29,7 @@
             android:maxLines="1"
             app:layout_constraintBottom_toTopOf="@id/name"
             app:layout_constraintEnd_toStartOf="@id/menu"
-            app:layout_constraintStart_toEndOf="@id/start"
+            app:layout_constraintStart_toEndOf="@id/range"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             tools:text="@sample/jobs.json/data/position" />
@@ -63,7 +44,7 @@
             app:layout_constraintBottom_toTopOf="@id/link"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/interval"
+            app:layout_constraintStart_toEndOf="@id/range"
             app:layout_constraintTop_toBottomOf="@id/position"
             tools:text="@sample/jobs.json/data/name" />
 
@@ -73,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_spacing"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/finish"
+            app:layout_constraintStart_toEndOf="@id/range"
             app:layout_constraintTop_toBottomOf="@id/name"
             tools:text="@sample/jobs.json/data/link" />
 

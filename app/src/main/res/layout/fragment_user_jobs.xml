@@ -130,13 +130,13 @@
             tools:listitem="@layout/card_job" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fabJ"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:contentDescription="@string/add_post"
+            android:contentDescription="@string/add_job"
             android:focusable="true"
-            android:text="@string/add_post"
+            android:text="@string/add_job"
             android:layout_marginBottom="@dimen/margin_fab"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +146,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/toJobs"
+        android:id="@+id/toPosts"
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="62dp"
         android:layout_height="147dp"

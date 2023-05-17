@@ -42,8 +42,7 @@ class JobViewHolder(
         binding.apply {
             name.text = job.name
             position.text = job.position
-            start.text = job.start
-            finish.text = job.finish ?: itemView.context.getText(R.string.finish)
+            range.text = itemView.context.getString(R.string.range, job.start, job.finish?: itemView.context.getText(R.string.finish))
             link.text = job.link ?: itemView.context.getText(R.string.no_link)
         }
     }

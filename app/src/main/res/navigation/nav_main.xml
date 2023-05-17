@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/eventFeedFragment"
         android:name="ru.netology.workmeet.ui.EventFeedFragment"
-        android:label="Events">
+        android:label="@string/event_feed">
         <action
             android:id="@+id/action_eventFeedFragment_to_postFeedFragment"
             app:destination="@id/postFeedFragment" />
@@ -27,13 +27,16 @@
     <fragment
         android:id="@+id/postFeedFragment"
         android:name="ru.netology.workmeet.ui.PostFeedFragment"
-        android:label="Posts">
+        android:label="@string/post_feed">
         <action
             android:id="@+id/action_postFeedFragment_to_eventFeedFragment"
             app:destination="@id/eventFeedFragment" />
         <action
             android:id="@+id/action_postFeedFragment_to_wallFragment"
-            app:destination="@id/wallFragment" />
+            app:destination="@id/wallFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_main"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_postFeedFragment_to_newPostFragment"
             app:destination="@id/newPostFragment" />
@@ -55,10 +58,13 @@
     <fragment
         android:id="@+id/wallFragment"
         android:name="ru.netology.workmeet.ui.WallFragment"
-        android:label="Wall">
+        android:label="@string/user_page">
         <action
             android:id="@+id/action_wallFragment_to_postFeedFragment"
-            app:destination="@id/postFeedFragment" />
+            app:destination="@id/postFeedFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_main"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_wallFragment_to_eventFeedFragment"
             app:destination="@id/eventFeedFragment" />
@@ -115,6 +121,13 @@
     <dialog
         android:id="@+id/signInFragment"
         android:name="ru.netology.workmeet.ui.SignInFragment"
-        android:label="SignIn" />
+        android:label="SignIn" >
+        <action
+            android:id="@+id/action_signInFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_postFeedFragment"
+            app:destination="@id/postFeedFragment" />
+    </dialog>
 
 </navigation>

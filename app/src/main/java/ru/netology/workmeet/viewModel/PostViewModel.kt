@@ -1,7 +1,6 @@
 package ru.netology.workmeet.viewModel
 
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +22,7 @@ import ru.netology.workmeet.repository.PostRepository
 import ru.netology.workmeet.ui.MediaLifecycleObserver
 import ru.netology.workmeet.util.SingleLiveEvent
 import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 private val empty = Post(
@@ -36,6 +36,9 @@ private val empty = Post(
 )
 
 private val noMedia = MediaModel(null, null)
+
+private  val noUpload = MediaUpload(null, " ")
+
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
@@ -67,6 +70,10 @@ class PostViewModel @Inject constructor(
     val media: LiveData<MediaModel>
         get() = _media
 
+    private val _upload = MutableLiveData(noUpload)
+    val upload: LiveData<MediaUpload>
+    get() = _upload
+
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -91,7 +98,7 @@ class PostViewModel @Inject constructor(
             viewModelScope.launch {
                 try {
                     repository.save(
-                        it, _media.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload.value
                     )
                     _postCreated.value = Unit
                     _dataState.value = FeedModelState.Idle
@@ -103,6 +110,8 @@ class PostViewModel @Inject constructor(
             }
             edited.value = empty
             _media.value = noMedia
+            _upload.value = noUpload
+
         }
 
     fun edit(post: Post) {
@@ -149,6 +158,11 @@ class PostViewModel @Inject constructor(
 
     fun changeAttachment(uri: Uri?, file: File?) {
         _media.value = MediaModel(uri, file)
+    }
+
+    fun changeFile(uri: Uri, inputStream: InputStream){
+        val name = uri.pathSegments.last().substringAfterLast('/')
+        _upload.value = MediaUpload(inputStream, name)
     }
 
     fun playAudio(post: Post) {

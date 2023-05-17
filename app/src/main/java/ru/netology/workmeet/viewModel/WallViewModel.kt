@@ -82,6 +82,10 @@ class WallViewModel @Inject constructor(
     val media: LiveData<MediaModel>
         get() = _media
 
+    private val _upload = MutableLiveData<MediaUpload>()
+    val upload: LiveData<MediaUpload>
+        get() = _upload
+
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -111,7 +115,7 @@ class WallViewModel @Inject constructor(
 
                 try {
                     repository.save(
-                        it, _media.value?.uri?.let { MediaUpload(it.toFile()) }
+                        it, upload.value
                     )
                     _postCreated.value = Unit
                     _dataState.value = FeedModelState.Idle

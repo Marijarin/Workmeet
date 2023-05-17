@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.Job
@@ -17,20 +17,45 @@ import ru.netology.workmeet.util.SingleLiveEvent
 import javax.inject.Inject
 
 private val empty = Job(
-    id = 0L,
-    name ="",
-    position = "",
-    start = "",
-    finish ="",
+    id = 0,
+    name ="company",
+    position = "director",
+    start = "then",
+    finish ="now",
     link = null
 )
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val repository: JobRepository,
-
+    appAuth: AppAuth
 ): ViewModel() {
-    private val _data = MutableStateFlow(listOf<Job>())
-    val data: Flow<List<Job>> = _data.asStateFlow()
+    val userId = MutableStateFlow(0L)
+    fun setUserId(id: Long) {
+        userId.run {
+            this.value = id
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val data: Flow<List<Job>> = userId.flatMapLatest {
+        repository.data
+            .map { jobs ->
+                jobs.filter {
+                    it.userId == userId.value
+                }
+            }
+    }.flowOn(Dispatchers.Default)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val myData: Flow<List<Job>> = appAuth.state.flatMapLatest {
+        repository.data
+            .map { jobs ->
+                jobs.filter {
+                    it.userId == appAuth.state.value.id
+                }
+            }
+    }.flowOn(Dispatchers.Default)
+
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
     get() = _dataState

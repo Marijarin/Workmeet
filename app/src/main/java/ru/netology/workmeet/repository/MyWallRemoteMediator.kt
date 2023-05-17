@@ -28,11 +28,11 @@ class MyWallRemoteMediator(
             val response = when (loadType) {
                 LoadType.REFRESH -> service.getMyWallLatestP(state.config.initialLoadSize)
                 LoadType.PREPEND -> {
-                    val id = myWallRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                    val id = myWallRemoteKeyDao.max() ?: return MediatorResult.Success(true)
                     service.getMyWallAfterP(id, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
-                    val id = myWallRemoteKeyDao.min() ?: return MediatorResult.Success(false)
+                    val id = myWallRemoteKeyDao.min() ?: return MediatorResult.Success(true)
                     service.getMyWallBeforeP(id, state.config.pageSize)
                 }
             }

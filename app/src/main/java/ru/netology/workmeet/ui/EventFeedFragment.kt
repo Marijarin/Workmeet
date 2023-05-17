@@ -68,9 +68,7 @@ import javax.inject.Inject
 
                 override fun onLike(item: FeedItem) {
                     if (item is Event) {
-                        if (!item.likedByMe) viewModel.likeById(item.id) else if (item.likedByMe) viewModel.unlikeById(
-                            item.id
-                        )
+                        if (!item.likedByMe) viewModel.likeById(item.id) else viewModel.unlikeById(item.id)
                     } else return
                 }
 
@@ -125,13 +123,16 @@ import javax.inject.Inject
 
             }
 
-            binding.fab.setOnClickListener {
-                it.visibility = View.VISIBLE
+            binding.fabE.setOnClickListener {
                 if (!authViewModel.authenticated) {
                     alertDialog?.show()
+                } else if (authViewModel.authenticated) {
+                    findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
                 }
                 setFragmentResultListener("signInClosed") { _, _ ->
-                    if (authViewModel.authenticated) findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
+                    if (authViewModel.authenticated) {
+                        findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                    }
                 }
             }
             return binding.root

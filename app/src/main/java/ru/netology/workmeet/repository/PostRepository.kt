@@ -3,11 +3,13 @@ package ru.netology.workmeet.repository
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import okhttp3.RequestBody
 import ru.netology.workmeet.dao.MyWallRemoteKeyDao
 import ru.netology.workmeet.dao.WallRemoteKeyDao
 import ru.netology.workmeet.db.AppDb
 import ru.netology.workmeet.dto.*
 import java.io.File
+import java.io.InputStream
 
 interface PostRepository {
 

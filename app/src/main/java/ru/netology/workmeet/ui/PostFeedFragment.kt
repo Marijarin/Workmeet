@@ -3,6 +3,7 @@ package ru.netology.workmeet.ui
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -11,7 +12,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.internal.NavigationMenu
+import com.google.android.material.navigation.NavigationBarMenuView
+import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,7 +101,7 @@ class PostFeedFragment : Fragment() {
             override fun onUser(item: FeedItem) {
                 if (item is Post && authViewModel.authenticated) {
                     val json = postToJson(item)
-                    findNavController().navigate(R.id.action_postFeedFragment_to_wallFragment,
+                    findNavController( ).navigate(R.id.action_postFeedFragment_to_wallFragment,
                         Bundle().apply { textArg = json })
                 } else  alertDialog?.show()
             }
@@ -104,6 +116,7 @@ class PostFeedFragment : Fragment() {
 
 
         }, appAuth)
+
 
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
             header = ItemLoadingStateAdapter {
@@ -148,11 +161,15 @@ class PostFeedFragment : Fragment() {
         binding.fab.setOnClickListener {
             if (!authViewModel.authenticated) {
                 alertDialog?.show()
-            }
-           //setFragmentResultListener("signInClosed") { _, _ ->
-                if (authViewModel.authenticated) findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
-           //}
+            } else if (authViewModel.authenticated) {
+            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
         }
-        return binding.root
-    }
+            setFragmentResultListener("signInClosed") { _, _ ->
+                if (authViewModel.authenticated) {
+                    findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                }
+            }
+        }
+            return binding.root
+        }
 }

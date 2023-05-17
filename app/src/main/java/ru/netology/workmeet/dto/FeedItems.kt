@@ -62,7 +62,7 @@ data class Job(
     val start: String,
     val finish: String?,
     val link: String?,
-
+    val userId: Long = 0,
 ): FeedItem
 data class User(
     var id: Long,

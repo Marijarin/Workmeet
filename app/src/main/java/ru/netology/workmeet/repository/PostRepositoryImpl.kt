@@ -3,8 +3,9 @@ package ru.netology.workmeet.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.*
@@ -120,16 +121,23 @@ class PostRepositoryImpl @Inject constructor(
 
     suspend fun upload(upload: MediaUpload): Media {
         try {
-            val media = MultipartBody.Part.createFormData(
-                "file", upload.file.name, upload.file.asRequestBody()
-            )
 
-            val response = apiService.upload(media)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
+            val media = upload.inputStream?.readBytes()
+                ?.toRequestBody("multipart/form-data".toMediaType())?.let {
+                    MultipartBody.Part.createFormData(
+                        "file",
+                        upload.name,
+                        it
+                    )
+                }
+            val response = media?.let { apiService.upload(it) }
+            if (response != null) {
+                if (!response.isSuccessful) {
+                    throw ApiError(response.code(), response.message())
+                }
             }
+            return response!!.body() ?: throw ApiError(response.code(), response.message())
 
-            return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: java.io.IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -150,9 +158,9 @@ class PostRepositoryImpl @Inject constructor(
                             AttachmentType.IMAGE
                         )
                     )
-                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") -> post.copy(
-                        attachment = Attachment(it.url, AttachmentType.AUDIO)
-                    )
+                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(".ogg") -> {
+                        post.copy(attachment = Attachment(it.url, AttachmentType.AUDIO))
+                    }
                     it.url.contains(".mp4") -> post.copy(
                         attachment = Attachment(
                             it.url,

@@ -1,7 +1,6 @@
 package ru.netology.workmeet.adapter
 
 
-import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +17,11 @@ import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.CardEventBinding
 import ru.netology.workmeet.databinding.CardPostBinding
-import ru.netology.workmeet.dto.*
-import java.util.*
+import ru.netology.workmeet.dto.AttachmentType
+import ru.netology.workmeet.dto.Event
+import ru.netology.workmeet.dto.FeedItem
+import ru.netology.workmeet.dto.Post
+import ru.netology.workmeet.util.AndroidUtils.toDate
 
 
 interface OnInteractionListener {
@@ -73,14 +75,7 @@ class PostViewHolder(
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private fun toDate(published: String): String {
 
-        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-        val formattedDate = formatter.format(parser.parse(published) ?: "")
-
-        return formattedDate
-    }
 
     fun bind(post: Post) {
 
@@ -94,12 +89,16 @@ class PostViewHolder(
             published.text = toDate(post.published)
             content.text = post.content
             like.isChecked = post.likedByMe
+            attachmentContainer.isVisible = post.attachment != null
+            attachment.visibility = View.GONE
             video.visibility = View.GONE
             pause.visibility = View.GONE
             play.visibility = View.GONE
+
             likeOwners.adapter = childAdapter
             likeOwners.layoutManager =
                 LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+
             when (post.authorAvatar) {
                 null -> Glide.with(avatar)
                     .load(R.drawable.avatar3)
@@ -114,7 +113,7 @@ class PostViewHolder(
                     .timeout(10_000)
                     .into(avatar)
             }
-            attachment.let {
+            attachmentContainer.let {
                 if (post.attachment != null) {
                     when (post.attachment.typeA) {
                         AttachmentType.IMAGE -> {
@@ -127,12 +126,11 @@ class PostViewHolder(
                         }
                         AttachmentType.AUDIO -> {
                             play.visibility = View.VISIBLE
-                            attachment.setOnClickListener { onInteractionListener.onPlay(post) }
                         }
                         AttachmentType.VIDEO -> {
                             video.visibility = View.VISIBLE
                             play.visibility = View.VISIBLE
-                            attachment.setOnClickListener {
+                            video.setOnClickListener {
                                 video.apply {
                                     setMediaController(MediaController(context))
                                     setVideoURI(
@@ -150,7 +148,6 @@ class PostViewHolder(
                     }
                 }
             }
-            attachment.isVisible = post.attachment != null
 
             play.setOnClickListener {
                 play.visibility = View.GONE
@@ -168,10 +165,9 @@ class PostViewHolder(
                 play.visibility = View.VISIBLE
             }
 
-            if (video.isFocused) {
+            if (video.isAccessibilityFocused) {
                 pause.visibility = View.VISIBLE
             }
-
 
             menu.isVisible = post.ownedByMe
 

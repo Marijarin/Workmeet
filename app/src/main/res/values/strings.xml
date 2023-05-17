@@ -57,4 +57,7 @@
     <string name="description_pause_button">Pause</string>
     <string name="user_page">user page</string>
     <string name="now">now</string>
+    <string name="range" translatable="false">%1$s\n%2$s</string>
+    <string name="select_interval">Select\ndates</string>
+    <string name="select_dates">Select dates</string>
 </resources>

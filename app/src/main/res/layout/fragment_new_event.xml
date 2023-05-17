@@ -24,10 +24,38 @@
                 android:id="@+id/edit"
                 android:hint="@string/tell_about_new_event_here"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/attachment_height"
                 android:background="@android:color/transparent"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/common_spacing" />
+
+            <Button
+                android:id="@+id/datetime"
+                style="@style/Widget.AppTheme.Menu.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/common_spacing"
+                android:contentDescription="todo"
+                app:icon="@drawable/baseline_calendar_month_24"
+                app:iconSize="@dimen/icon_button_min_size"
+                app:layout_constraintEnd_toStartOf="@id/type"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit"
+                 />
+
+            <Button
+                android:id="@+id/type"
+                style="@style/Widget.AppTheme.Menu.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/common_spacing"
+                android:contentDescription="todo"
+                app:icon="@drawable/round_language_24"
+                app:iconSize="@dimen/icon_button_min_size"
+                app:layout_constraintStart_toEndOf="@id/datetime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit"
+                />
 
             <FrameLayout
                 android:id="@+id/photoContainer"
@@ -118,7 +146,7 @@
             app:iconGravity="end|start"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/addMentioned"
+            android:id="@+id/addSpeaker"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

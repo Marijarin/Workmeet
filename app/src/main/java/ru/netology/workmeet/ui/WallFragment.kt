@@ -18,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import ru.netology.workmeet.R
 import ru.netology.workmeet.adapter.ItemLoadingStateAdapter
 import ru.netology.workmeet.adapter.OnInteractionListener
@@ -127,6 +126,7 @@ class WallFragment : Fragment() {
                 viewModel.uData.collectLatest(adapter::submitData)
             } else {
                 viewModel.getUserById(appAuth.state.value.id)
+                viewModel.setUserId(appAuth.state.value.id)
                 viewModel.user.collectLatest {
                     binding.apply {
                         when (it.avatar) {
@@ -178,22 +178,23 @@ class WallFragment : Fragment() {
         binding.toJobs.setOnClickListener {
             if (!authViewModel.authenticated) {
                 alertDialog?.show()
-            }
-            //setFragmentResultListener("signInClosed") { _, _ ->
-                if (authViewModel.authenticated) findNavController().navigate(R.id.action_wallFragment_to_userJobsFragment,
-                bundleOf("userId" to  viewModel.userId.value)
-                )
-            //}
-        }
-
-
-        binding.fab.setOnClickListener {
-            if (!authViewModel.authenticated) {
-                alertDialog?.show()
+            } else if (authViewModel.authenticated) {
+                findNavController().navigate(R.id.action_wallFragment_to_userJobsFragment, bundleOf( "userId" to viewModel.userId.value))
             }
             setFragmentResultListener("signInClosed") { _, _ ->
-                if (authViewModel.authenticated) findNavController().navigate(R.id.action_wallFragment_to_newPostFragment)
+                if (authViewModel.authenticated) {
+                    findNavController().navigate(R.id.action_wallFragment_to_userJobsFragment, bundleOf( "userId" to viewModel.userId.value))
+                }
             }
+        }
+
+        if (viewModel.userId.value!=appAuth.state.value.id){
+            binding.fabW.visibility = View.GONE
+            binding.message.visibility = View.VISIBLE
+            binding.invite.visibility = View.VISIBLE
+        }
+        binding.fabW.setOnClickListener {
+            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
         }
         return binding.root
     }

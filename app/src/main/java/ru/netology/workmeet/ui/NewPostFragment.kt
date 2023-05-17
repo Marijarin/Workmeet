@@ -1,5 +1,6 @@
 package ru.netology.workmeet.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -7,7 +8,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -32,6 +32,7 @@ class NewPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
     private var fragmentBinding: FragmentNewPostBinding? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,19 +77,44 @@ class NewPostFragment : Fragment() {
                     }
                 }
             }
-        val pickAudioLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            when (it.resultCode) {
-                Activity.RESULT_CANCELED -> {
-                    Snackbar
-                        .make(binding.root, R.string.error_loading, Snackbar.LENGTH_SHORT)
-                        .show()
-                }
-                Activity.RESULT_OK -> {
-                    val uri: Uri? = it.data?.data
-                    viewModel.changeAttachment(uri, uri?.toFile())
+        val pickMediaLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    Activity.RESULT_CANCELED -> {
+                        Snackbar
+                            .make(binding.root, R.string.error_loading, Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                    Activity.RESULT_OK -> {
+                        val uri: Uri? = it.data?.data
+                        val stream = uri?.let { it1 ->
+                            requireContext().contentResolver.openInputStream(
+                                it1
+                            )
+                        }
+                        if (uri != null && stream!=null) {
+                            viewModel.changeFile(uri, stream)
+
+
+                        }
+                    }
                 }
             }
+
+        binding.addAudio.setOnClickListener {
+            val intent = Intent().apply {
+                action = Intent.ACTION_GET_CONTENT
+            }.setType( "audio/*")
+            pickMediaLauncher.launch(intent)
         }
+
+        binding.addVideo.setOnClickListener {
+            val intent = Intent().apply {
+                action = Intent.ACTION_GET_CONTENT
+            }.setType( "video/*")
+            pickMediaLauncher.launch(intent)
+        }
+
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.with(this)
@@ -118,21 +144,13 @@ class NewPostFragment : Fragment() {
             viewModel.changeAttachment(null, null)
         }
 
-        binding.addAudio.setOnClickListener {
-            val intent = Intent().apply {
-                action = Intent.ACTION_GET_CONTENT
-            }.setDataAndTypeAndNormalize(Uri.parse(viewModel.media.value?.file.toString()),"audio/*" )
-            pickAudioLauncher.launch(intent)
-        }
-
-
         viewModel.media.observe(viewLifecycleOwner) {
             binding.photo.setImageURI(it.uri)
             binding.photoContainer.isVisible = it.uri != null
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_newPostFragment_to_postFeedFragment)
         }
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -141,11 +159,12 @@ class NewPostFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.save ->  { fragmentBinding?.let {
-                        viewModel.changeContent(it.edit.text.toString())
-                        viewModel.save()
-                        AndroidUtils.hideKeyboard(requireView())
-                    }
+                    R.id.save -> {
+                        fragmentBinding?.let {
+                            viewModel.changeContent(it.edit.text.toString())
+                            viewModel.save()
+                            AndroidUtils.hideKeyboard(requireView())
+                        }
                         true
                     }
 
@@ -157,6 +176,7 @@ class NewPostFragment : Fragment() {
 
         return binding.root
     }
+
     override fun onDestroyView() {
         fragmentBinding = null
         super.onDestroyView()

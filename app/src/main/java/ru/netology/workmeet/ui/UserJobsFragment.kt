@@ -59,8 +59,15 @@ class UserJobsFragment : Fragment() {
         }, appAuth)
         binding.list.adapter = adapter
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
-                adapter.submitList(it)
+            viewModel.setUserId(userId)
+            if(userId != appAuth.state.value.id) {
+                viewModel.data.collectLatest {
+                    adapter.submitList(it)
+                }
+            } else {
+                viewModel.myData.collectLatest {
+                    adapter.submitList(it)
+                }
             }
         }
 
@@ -89,12 +96,18 @@ class UserJobsFragment : Fragment() {
                 )
 
         }
+        binding.toPosts.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
+        if (userId!=appAuth.state.value.id){
+            binding.fabJ.visibility = View.GONE
+        }
 
-        binding.fab.setOnClickListener {
+        binding.fabJ.setOnClickListener {
             findNavController().navigate(
                 R.id.action_userJobsFragment_to_newJobFragment,
-                bundleOf("userId" to userId)
+                bundleOf("userId" to appAuth.state.value.id)
             )
 
         }
