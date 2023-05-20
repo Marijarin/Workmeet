@@ -42,16 +42,23 @@ class JobViewModel @Inject constructor(
             .map { jobs ->
                 jobs.filter {
                     it.userId == userId.value
+                }.map{
+                        jobEntity ->
+                    jobEntity.toDto().copy(userId = userId.value)
                 }
             }
+
     }.flowOn(Dispatchers.Default)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val myData: Flow<List<Job>> = appAuth.state.flatMapLatest {
+    val myData: Flow<List<Job>> = appAuth.state.flatMapLatest { (myId, _) ->
         repository.data
             .map { jobs ->
                 jobs.filter {
-                    it.userId == appAuth.state.value.id
+                    it.userId == myId
+                }.map{
+                        jobEntity ->
+                    jobEntity.toDto().copy(userId = myId)
                 }
             }
     }.flowOn(Dispatchers.Default)
@@ -104,12 +111,12 @@ class JobViewModel @Inject constructor(
             _dataState.value = FeedModelState.Error
         }
     }
-    fun changeContent(name:String, position: String, start: String, finish: String, link: String){
+    fun changeContent(name:String, position: String, start: String, finish: String?, link: String?){
         val nameJ = name.trim()
         val positionJ = position.trim()
         val startJ = start.trim()
-        val finishJ = finish.trim()
-        val linkJ = link.trim()
+        val finishJ = finish?.trim()
+        val linkJ = link?.trim()
         if (edited.value?.name == nameJ
             && edited.value?.position == positionJ
             && edited.value?.start == startJ

@@ -39,11 +39,9 @@ class UserJobsFragment : Fragment() {
 
         val userId = requireArguments().getLong("userId")
 
-        if (arguments != null) {
-            userId.let {
-                viewModel.loadJobs(it)
-            }
-        } else findNavController().navigateUp()
+        userId.let {
+            viewModel.loadJobs(it)
+        }
 
 
         val adapter = JobAdapter(object : OnInteractionSmallListener {

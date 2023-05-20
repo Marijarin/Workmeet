@@ -14,6 +14,7 @@ import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.FragmentNewJobBinding
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.util.AndroidUtils
+import ru.netology.workmeet.util.AndroidUtils.dateForServer
 import ru.netology.workmeet.util.AndroidUtils.toDateFromLong
 import ru.netology.workmeet.viewModel.JobViewModel
 
@@ -21,7 +22,12 @@ import ru.netology.workmeet.viewModel.JobViewModel
 class NewJobFragment : Fragment() {
     private val viewModel: JobViewModel by activityViewModels()
     private var fragmentBinding: FragmentNewJobBinding? = null
-
+    companion object {
+        var startDate: Long = 0
+        var endDate: Long? = null
+        lateinit var startDateString: String
+        lateinit var endDateString: String
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,8 +38,7 @@ class NewJobFragment : Fragment() {
         fragmentBinding = binding
 
         val userId = arguments?.getLong("userId")
-        var startDateString: String
-        var endDateString: String
+
 
         if (arguments?.containsKey("name") == true
             && arguments?.containsKey("position") == true
@@ -53,15 +58,16 @@ class NewJobFragment : Fragment() {
                 .build()
             dateRangePicker.show(requireActivity().supportFragmentManager, "job dates")
             dateRangePicker.addOnPositiveButtonClickListener { datePicked ->
-                val startDate = datePicked.first
-                val endDate: Long? = datePicked.second
+                startDate = datePicked.first
+                endDate = datePicked.second
                 startDateString = toDateFromLong(startDate)
                 endDateString =
                     when (endDate) {
                         null -> "now"
-                        else -> toDateFromLong(endDate)
+                        else -> toDateFromLong(endDate!!)
                     }
-                binding.selectRange.text = getString(R.string.range, startDateString, endDateString)
+                binding.start.text = startDateString
+                binding.finish.text = endDateString
             }
         }
 
@@ -80,7 +86,7 @@ class NewJobFragment : Fragment() {
             if (userId != null) {
                 viewModel.loadJobs(userId)
             }
-            findNavController().navigate(R.id.action_newJobFragment_to_userJobsFragment, bundleOf("userId" to userId))
+            findNavController().navigateUp()
         }
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -92,11 +98,11 @@ class NewJobFragment : Fragment() {
                     R.id.save -> {
                         if (userId != null) {
                             viewModel.changeContent(
-                                binding.name.toString(),
-                                binding.position.toString(),
-                                start = binding.selectRange.toString().substringBefore("\n"),
-                                finish = binding.selectRange.toString().substringAfter("\n"),
-                                binding.link.toString()
+                                name = binding.name.text.toString(),
+                                position = binding.position.text.toString(),
+                                start = dateForServer(startDate),
+                                finish = endDate?.let { dateForServer(it)},
+                                link = binding.link.text.toString()
                             )
                             viewModel.save(userId)
                         }

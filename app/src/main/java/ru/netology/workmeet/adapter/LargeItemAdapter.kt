@@ -131,6 +131,7 @@ class PostViewHolder(
                             video.visibility = View.VISIBLE
                             play.visibility = View.VISIBLE
                             video.setOnClickListener {
+                                onInteractionListener.onPlay(post)
                                 video.apply {
                                     setMediaController(MediaController(context))
                                     setVideoURI(
@@ -151,8 +152,26 @@ class PostViewHolder(
 
             play.setOnClickListener {
                 play.visibility = View.GONE
-                pause.visibility = View.VISIBLE
-                onInteractionListener.onPlay(post)
+
+                if(post.attachment?.typeA == AttachmentType.AUDIO) {
+                    pause.visibility = View.VISIBLE
+                    onInteractionListener.onPlay(post) }
+                else if (post.attachment?.typeA == AttachmentType.VIDEO){
+                    pause.visibility = View.GONE
+                    video.apply {
+                        onInteractionListener.onPlay(post)
+                        setMediaController(MediaController(context))
+                        setVideoURI(
+                            Uri.parse(post.attachment.url)
+                        )
+                        setOnPreparedListener {
+                            start()
+                        }
+                        setOnCompletionListener {
+                            stopPlayback()
+                        }
+                    }
+                }
             }
             pause.setOnClickListener {
                 pause.visibility = View.GONE
@@ -165,9 +184,6 @@ class PostViewHolder(
                 play.visibility = View.VISIBLE
             }
 
-            if (video.isAccessibilityFocused) {
-                pause.visibility = View.VISIBLE
-            }
 
             menu.isVisible = post.ownedByMe
 
@@ -241,17 +257,77 @@ class EventViewHolder(
                     .into(avatar)
             }
 
-            attachment.let {
+            attachmentContainer.let {
                 if (event.attachment != null) {
-                    Glide.with(attachment)
-                        .load(event.attachment.url)
-                        .placeholder(R.drawable.baseline_attachment_24)
-                        .error(R.drawable.twotone_error_outline_24)
-                        .timeout(10_000)
-                        .into(attachment)
+                    when (event.attachment.typeA) {
+                        AttachmentType.IMAGE -> {
+                            Glide.with(attachment)
+                                .load(event.attachment.url)
+                                .placeholder(R.drawable.baseline_attachment_24)
+                                .error(R.drawable.twotone_error_outline_24)
+                                .timeout(10_000)
+                                .into(attachment)
+                        }
+                        AttachmentType.AUDIO -> {
+                            play.visibility = View.VISIBLE
+                        }
+                        AttachmentType.VIDEO -> {
+                            video.visibility = View.VISIBLE
+                            play.visibility = View.VISIBLE
+                            video.setOnClickListener {
+                                onInteractionListener.onPlay(event)
+                                video.apply {
+                                    setMediaController(MediaController(context))
+                                    setVideoURI(
+                                        Uri.parse(event.attachment.url)
+                                    )
+                                    setOnPreparedListener {
+                                        start()
+                                    }
+                                    setOnCompletionListener {
+                                        stopPlayback()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            attachment.isVisible = event.attachment != null
+
+            play.setOnClickListener {
+                play.visibility = View.GONE
+
+                if(event.attachment?.typeA == AttachmentType.AUDIO) {
+                    pause.visibility = View.VISIBLE
+                    onInteractionListener.onPlay(event) }
+                else if (event.attachment?.typeA == AttachmentType.VIDEO){
+                    pause.visibility = View.GONE
+                    video.apply {
+                        onInteractionListener.onPlay(event)
+                        setMediaController(MediaController(context))
+                        setVideoURI(
+                            Uri.parse(event.attachment.url)
+                        )
+                        setOnPreparedListener {
+                            start()
+                        }
+                        setOnCompletionListener {
+                            stopPlayback()
+                        }
+                    }
+                }
+            }
+            pause.setOnClickListener {
+                pause.visibility = View.GONE
+                play.visibility = View.VISIBLE
+                onInteractionListener.onPause()
+            }
+
+            if(!pause.isFocusable){
+                pause.visibility = View.GONE
+                play.visibility = View.VISIBLE
+            }
+
 
             menu.isVisible = event.ownedByMe
 
@@ -274,6 +350,19 @@ class EventViewHolder(
                     }
                 }.show()
             }
+            like.setOnClickListener {
+                if (appAuth.state.value.id != 0L) {
+                    onInteractionListener.onLike(event)
+                } else if (appAuth.state.value.id == 0L) {
+                    like.isChecked = false
+                    like.isEnabled = false
+                    onInteractionListener.onAuth()
+                }
+            }
+            avatar.setOnClickListener {
+                onInteractionListener.onUser(event)
+            }
+
         }
     }
 }

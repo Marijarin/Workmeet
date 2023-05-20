@@ -1,6 +1,5 @@
 package ru.netology.workmeet.viewModel
 
-import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,7 +46,7 @@ private val noMedia = MediaModel(null, null)
 class WallViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
-) : ViewModel() {
+) : PostViewModel(repository, appAuth) {
     val userId = MutableStateFlow(0L)
     fun setUserId(id: Long) {
         userId.run {
@@ -55,7 +54,8 @@ class WallViewModel @Inject constructor(
         }
     }
 
-    private val mediaObserver = MediaLifecycleObserver()
+
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uData: Flow<PagingData<Post>> = userId.flatMapLatest {
@@ -75,21 +75,13 @@ class WallViewModel @Inject constructor(
         }
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
-    val dataState: LiveData<FeedModelState>
-        get() = _dataState
 
     private val _media = MutableLiveData(noMedia)
-    val media: LiveData<MediaModel>
-        get() = _media
 
     private val _upload = MutableLiveData<MediaUpload>()
-    val upload: LiveData<MediaUpload>
-        get() = _upload
 
-    val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
-        get() = _postCreated
+
 
     private val _user = MutableStateFlow(typical)
     val user: Flow<User>
@@ -97,78 +89,6 @@ class WallViewModel @Inject constructor(
 
     init {
         loadPosts()
-    }
-
-    fun loadPosts() = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState.Loading
-            _dataState.value = FeedModelState.Idle
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState.Error
-        }
-    }
-
-    fun save() =
-        edited.value?.let {
-            viewModelScope.launch {
-
-
-                try {
-                    repository.save(
-                        it, upload.value
-                    )
-                    _postCreated.value = Unit
-                    _dataState.value = FeedModelState.Idle
-                } catch (e: Exception) {
-                    _dataState.value = FeedModelState.Error
-                    e.printStackTrace()
-                }
-
-            }
-            edited.value = empty
-            _media.value = noMedia
-        }
-
-    fun edit(post: Post) {
-        edited.value = post
-    }
-
-    fun changeContent(content: String) {
-        val text = content.trim()
-        if (edited.value?.content == text) {
-            return
-        }
-        edited.value = edited.value?.copy(content = text)
-    }
-
-    fun likeById(id: Long) = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState.Refreshing
-            repository.likeById(id)
-            _dataState.value = FeedModelState.Idle
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState.Error
-        }
-    }
-
-    fun unlikeById(id: Long) = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState.Refreshing
-            repository.unlikeById(id)
-            _dataState.value = FeedModelState.Idle
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState.Error
-        }
-    }
-
-    fun removeById(id: Long) = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState.Refreshing
-            repository.removeById(id)
-            _dataState.value = FeedModelState.Idle
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState.Error
-        }
     }
 
     fun getUserById(userId: Long) = viewModelScope.launch {
@@ -182,33 +102,5 @@ class WallViewModel @Inject constructor(
     }
 
 
-    fun playAudio(post: Post) {
-        when (post.attachment?.typeA) {
-            AttachmentType.AUDIO -> {
-                mediaObserver.apply {
-                    if (player != null && player!!.isPlaying) {
-                        player?.stop()
-                        player?.reset()
-                        player?.setDataSource(
-                            post.attachment.url
-                        )
-                    } else {
-                        player?.setDataSource(
-                            post.attachment.url
-                        )
-                    }
-                }.play()
-            }
-            else -> Unit
-        }
-    }
 
-    fun pause() {
-        mediaObserver.apply {
-            if (player != null) {
-                player?.stop()
-                player?.reset()
-            }
-        }
-    }
 }

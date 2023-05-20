@@ -52,67 +52,71 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierTop"
-            app:layout_constraintBottom_toTopOf="@id/attachment"
+            app:layout_constraintBottom_toTopOf="@id/attachmentContainer"
             tools:text="@sample/posts.json/data/content" />
 
-        <VideoView
-            android:id="@+id/video"
+        <FrameLayout
+            android:id="@+id/attachmentContainer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/attachment_height"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/content"
-            />
-
-        <ImageView
-            android:id="@+id/attachment"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/attachment_height"
-            android:layout_marginBottom="@dimen/common_spacing"
-            android:contentDescription="@string/post_attachment"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/content"
-            tools:srcCompat="@sample/posts.json/data/attachment" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/play"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/icon_button_min_size"
-            android:contentDescription="@string/description_play_button"
-            app:icon="@drawable/baseline_play_circle_filled_24"
-            app:iconSize="@dimen/button_margin"
-            app:layout_constraintBottom_toBottomOf="@id/video"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/barrierBottom"
-            />
+            >
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/pause"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/icon_min_size"
-            android:contentDescription="@string/description_pause_button"
-            app:icon="@drawable/baseline_pause_circle_24"
-            app:iconSize="@dimen/button_margin"
-            app:layout_constraintBottom_toBottomOf="@id/video"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/barrierBottom"
-            />
+            <VideoView
+                android:id="@+id/video"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/attachment_height"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/content"
+                />
 
+            <ImageView
+                android:id="@+id/attachment"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/attachment_height"
+                android:layout_marginBottom="@dimen/common_spacing"
+                android:contentDescription="@string/post_attachment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/content"
+                tools:srcCompat="@sample/posts.json/data/attachment" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/play"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description_play_button"
+                android:layout_gravity="center"
+                app:icon="@drawable/baseline_play_circle_filled_24"
+                app:iconSize="@dimen/button_margin"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pause"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/min_spacing"
+                android:contentDescription="@string/description_pause_button"
+                android:layout_gravity="center"
+                app:icon="@drawable/baseline_pause_circle_24"
+                app:iconSize="@dimen/button_margin"
+
+                />
+        </FrameLayout>
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrierBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="attachment, content"
+            app:constraint_referenced_ids="attachmentContainer"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="96dp" />
+
 
 
         <com.google.android.material.button.MaterialButton
@@ -123,7 +127,7 @@
             android:contentDescription="@string/description_post_likes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierBottom"
-            app:icon="@drawable/baseline_favorite_border_24"
+            app:icon="@drawable/ic_like_24dp"
             tools:text="@sample/posts.json/data/likes"
             style="@style/Widget.AppTheme.Button.Like"
             />
@@ -136,7 +140,6 @@
             app:layout_constraintTop_toBottomOf="@id/barrierBottom"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/card_user_preview" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

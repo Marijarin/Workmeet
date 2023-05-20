@@ -1,6 +1,5 @@
 package ru.netology.workmeet.adapter
 
-import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +16,8 @@ import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.UserCardPostBinding
 import ru.netology.workmeet.dto.AttachmentType
-import ru.netology.workmeet.dto.FeedItem
 import ru.netology.workmeet.dto.Post
-import java.util.*
+import ru.netology.workmeet.util.AndroidUtils.toDate
 
 class WallAdapter(
     private val onInteractionListener: OnInteractionListener,
@@ -51,16 +49,6 @@ class WallViewHolder(
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
-
-    private fun toDate(published: String): String {
-
-        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-        val formattedDate = formatter.format(parser.parse(published) ?: "")
-
-        return formattedDate
-    }
-
     fun bind(post: Post) {
 
         val childAdapter = UserPreviewAdapter(
@@ -68,18 +56,20 @@ class WallViewHolder(
         )
 
         binding.apply {
-
             published.text = toDate(post.published)
             content.text = post.content
             like.isChecked = post.likedByMe
+            attachmentContainer.isVisible = post.attachment != null
+            attachment.visibility = View.GONE
             video.visibility = View.GONE
             pause.visibility = View.GONE
             play.visibility = View.GONE
+
             likeOwners.adapter = childAdapter
             likeOwners.layoutManager =
                 LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
-            attachment.let {
+            attachmentContainer.let {
                 if (post.attachment != null) {
                     when (post.attachment.typeA) {
                         AttachmentType.IMAGE -> {
@@ -92,12 +82,12 @@ class WallViewHolder(
                         }
                         AttachmentType.AUDIO -> {
                             play.visibility = View.VISIBLE
-                            attachment.setOnClickListener { onInteractionListener.onPlay(post) }
                         }
                         AttachmentType.VIDEO -> {
                             video.visibility = View.VISIBLE
                             play.visibility = View.VISIBLE
-                            attachment.setOnClickListener {
+                            video.setOnClickListener {
+                                onInteractionListener.onPlay(post)
                                 video.apply {
                                     setMediaController(MediaController(context))
                                     setVideoURI(
@@ -115,12 +105,29 @@ class WallViewHolder(
                     }
                 }
             }
-            attachment.isVisible = post.attachment != null
 
             play.setOnClickListener {
                 play.visibility = View.GONE
-                pause.visibility = View.VISIBLE
-                onInteractionListener.onPlay(post)
+
+                if (post.attachment?.typeA == AttachmentType.AUDIO) {
+                    pause.visibility = View.VISIBLE
+                    onInteractionListener.onPlay(post)
+                } else if (post.attachment?.typeA == AttachmentType.VIDEO) {
+                    pause.visibility = View.GONE
+                    video.apply {
+                        onInteractionListener.onPlay(post)
+                        setMediaController(MediaController(context))
+                        setVideoURI(
+                            Uri.parse(post.attachment.url)
+                        )
+                        setOnPreparedListener {
+                            start()
+                        }
+                        setOnCompletionListener {
+                            stopPlayback()
+                        }
+                    }
+                }
             }
             pause.setOnClickListener {
                 pause.visibility = View.GONE
@@ -131,10 +138,6 @@ class WallViewHolder(
             if (!pause.isFocusable) {
                 pause.visibility = View.GONE
                 play.visibility = View.VISIBLE
-            }
-
-            if (video.isFocused) {
-                pause.visibility = View.VISIBLE
             }
 
 
@@ -168,11 +171,10 @@ class WallViewHolder(
                     onInteractionListener.onAuth()
                 }
             }
-
-
         }
     }
 }
+
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
         if (oldItem::class != newItem::class) {
@@ -185,4 +187,3 @@ class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
         return oldItem == newItem
     }
 }
-

@@ -41,7 +41,7 @@ private  val noUpload = MediaUpload(null, " ")
 
 
 @HiltViewModel
-class PostViewModel @Inject constructor(
+open class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : ViewModel() {
@@ -49,7 +49,7 @@ class PostViewModel @Inject constructor(
         .data
         .cachedIn(viewModelScope)
 
-    private val mediaObserver = MediaLifecycleObserver()
+    protected val mediaObserver = MediaLifecycleObserver()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<FeedItem>> = appAuth.state.flatMapLatest { (myId, _) ->
@@ -72,16 +72,12 @@ class PostViewModel @Inject constructor(
 
     private val _upload = MutableLiveData(noUpload)
     val upload: LiveData<MediaUpload>
-    get() = _upload
+        get() = _upload
 
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
-
-    init {
-        loadPosts()
-    }
 
     fun loadPosts() = viewModelScope.launch {
         try {
@@ -165,7 +161,8 @@ class PostViewModel @Inject constructor(
         _upload.value = MediaUpload(inputStream, name)
     }
 
-    fun playAudio(post: Post) {
+
+    fun playMedia(post: Post) {
         when (post.attachment?.typeA) {
             AttachmentType.AUDIO -> {
                 mediaObserver.apply {
@@ -181,6 +178,14 @@ class PostViewModel @Inject constructor(
                         )
                     }
                 }.play()
+            }
+            AttachmentType.VIDEO -> {
+                mediaObserver.apply {
+                    if (player != null && player!!.isPlaying) {
+                        player?.stop()
+                        player?.reset()
+                    }
+                }
             }
             else -> Unit
         }

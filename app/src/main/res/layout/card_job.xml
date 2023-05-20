@@ -63,7 +63,7 @@
             style="@style/Widget.AppTheme.Menu.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/description_post_menu"
+            android:contentDescription="@string/description_job_menu"
             app:icon="@drawable/baseline_more_vert_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

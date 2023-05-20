@@ -3,7 +3,6 @@ package ru.netology.workmeet.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import okio.IOException
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.JobDao
@@ -20,12 +19,7 @@ class JobRepositoryImpl @Inject constructor(
     private val jobDao: JobDao,
    ) : JobRepository {
 
-    override val data: Flow<List<Job>> = jobDao.getAllJ()
-        .map {
-            it.map { jobEntity ->
-                jobEntity.toDto()
-            }
-        }
+    override val data: Flow<List<JobEntity>> = jobDao.getAllJ()
         .flowOn(Dispatchers.Default)
 
     override suspend fun getAllJ(id: Long) {
@@ -59,14 +53,14 @@ class JobRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun save(job: Job, myId: Long) {
+    override suspend fun save(job: Job, id: Long) {
         try {
             val response = apiService.saveJ(job)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val newJob = response.body() ?: throw ApiError(response.code(), response.message())
-            jobDao.insert(JobEntity.fromDto(newJob, myId))
+            jobDao.insert(JobEntity.fromDto(newJob, id))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
