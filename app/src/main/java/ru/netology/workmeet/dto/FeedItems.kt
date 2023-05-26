@@ -46,7 +46,7 @@ data class Event(
     val participantsIds: List<Long> = emptyList(),
     val participatedByMe: Boolean = false,
     val attachment: Attachment? = null,
-    val link: String,
+    val link: String?,
     val ownedByMe: Boolean = false,
     val users: Map<String, UserPreview> = emptyMap(),
     ): FeedItem

@@ -122,7 +122,7 @@ interface ApiService {
     suspend fun saveJ(@Body job: Job): Response<Job>
 
     @DELETE("my/jobs/{job_id}")
-    suspend fun removeByIdJ(@Path("id") id: Long): Response<Job>
+    suspend fun removeByIdJ(@Path("job_id") id: Long): Response<Unit>
 
     /***** My Wall *****/
 

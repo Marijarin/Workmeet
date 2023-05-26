@@ -25,7 +25,7 @@ data class EventEntity(
     val participatedByMe: Boolean = false,
     @Embedded
     var attachment: AttachmentEmbeddable?,
-    val link: String,
+    val link: String?,
     val ownedByMe: Boolean = false,
     val users: Map<String, UserPreview>,
 ) {

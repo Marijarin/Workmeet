@@ -73,7 +73,7 @@ class JobViewHolder(
                     }
                 }.show()
             }
-            menu.isVisible = appAuth.state.value.id == job.userId
+            menu.isVisible = appAuth.state.replayCache.last().id == job.userId
 
         }
     }

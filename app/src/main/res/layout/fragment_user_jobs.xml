@@ -149,14 +149,11 @@
         android:id="@+id/toPosts"
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="62dp"
-        android:layout_height="147dp"
+        android:layout_height="@dimen/margin_fab"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/button_margin"
         android:contentDescription="@string/to_posts"
-        android:text="@string/to_posts"
         app:icon="@drawable/baseline_double_arrow_24"
-        app:iconGravity="textTop"
-        app:iconPadding="@dimen/icon_min_size"
         app:iconSize="@dimen/icon_min_size" />
 
 

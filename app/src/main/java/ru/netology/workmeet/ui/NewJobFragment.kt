@@ -60,6 +60,7 @@ class NewJobFragment : Fragment() {
             dateRangePicker.addOnPositiveButtonClickListener { datePicked ->
                 startDate = datePicked.first
                 endDate = datePicked.second
+                if(startDate == endDate) endDate = null
                 startDateString = toDateFromLong(startDate)
                 endDateString =
                     when (endDate) {
@@ -102,7 +103,7 @@ class NewJobFragment : Fragment() {
                                 position = binding.position.text.toString(),
                                 start = dateForServer(startDate),
                                 finish = endDate?.let { dateForServer(it)},
-                                link = binding.link.text.toString()
+                                link = binding.link.text.toString().ifBlank { null }
                             )
                             viewModel.save(userId)
                         }

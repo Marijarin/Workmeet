@@ -109,6 +109,7 @@ class JobViewModel @Inject constructor(
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+            print(e.printStackTrace())
         }
     }
     fun changeContent(name:String, position: String, start: String, finish: String?, link: String?){

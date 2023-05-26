@@ -120,8 +120,10 @@ class PostFeedFragment : Fragment() {
         }
 
         authViewModel.data.observe(viewLifecycleOwner) {
-            if (authViewModel.authenticated) {
-                adapter.refresh()
+            setFragmentResultListener("signInClosed") { _, _ ->
+                if (authViewModel.authenticated) {
+                    adapter.refresh()
+                }
             }
         }
 

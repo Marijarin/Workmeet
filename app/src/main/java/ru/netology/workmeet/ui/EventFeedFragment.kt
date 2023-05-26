@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,6 +24,7 @@ import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.FragmentEventFeedBinding
 import ru.netology.workmeet.dto.Event
 import ru.netology.workmeet.dto.FeedItem
+import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.ui.NewPostFragment.Companion.textArg
 import ru.netology.workmeet.viewModel.AuthViewModel
@@ -34,7 +36,7 @@ import javax.inject.Inject
     class EventFeedFragment : Fragment() {
         @Inject
         lateinit var appAuth: AppAuth
-        private val viewModel: EventViewModel by viewModels()
+        private val viewModel: EventViewModel by activityViewModels()
         private val authViewModel: AuthViewModel by activityViewModels()
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -77,6 +79,13 @@ import javax.inject.Inject
                         viewModel.removeById(item.id)
                     else return
                 }
+                override fun onPlay(item: FeedItem) {
+                    viewModel.playMedia(item as Event)
+                }
+
+                override fun onPause() {
+                    viewModel.pause()
+                }
 
                 override fun onAuth() {
                     alertDialog?.show()
@@ -92,14 +101,15 @@ import javax.inject.Inject
                 }
             )
 
-
             lifecycleScope.launchWhenCreated {
                 viewModel.data.collectLatest(adapter::submitData)
             }
 
             authViewModel.data.observe(viewLifecycleOwner) {
-                if (authViewModel.authenticated) {
-                    adapter.refresh()
+                setFragmentResultListener("signInClosed") { _, _ ->
+                    if (authViewModel.authenticated) {
+                        adapter.refresh()
+                    }
                 }
             }
 
@@ -117,21 +127,22 @@ import javax.inject.Inject
                     return@observe
                 }
                 findNavController()
-                    .navigate(R.id.action_eventFeedFragment_to_newEventFragment, Bundle().apply {
-                        textArg = event.content
-                    })
-
+                    .navigate(R.id.action_eventFeedFragment_to_newEventFragment, bundleOf(
+                        "content" to event.content,
+                        "type" to event.type,
+                        "datetime" to event.datetime
+                    ))
             }
 
             binding.fabE.setOnClickListener {
                 if (!authViewModel.authenticated) {
                     alertDialog?.show()
                 } else if (authViewModel.authenticated) {
-                    findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                    findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
                 }
                 setFragmentResultListener("signInClosed") { _, _ ->
                     if (authViewModel.authenticated) {
-                        findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                        findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
                     }
                 }
             }

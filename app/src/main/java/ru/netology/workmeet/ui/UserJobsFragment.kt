@@ -98,14 +98,16 @@ class UserJobsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        if (userId!=appAuth.state.value.id){
+        if (userId!=appAuth.state.replayCache.last().id){
             binding.fabJ.visibility = View.GONE
+            binding.message.visibility = View.GONE
+            binding.invite.visibility = View.GONE
         }
 
         binding.fabJ.setOnClickListener {
             findNavController().navigate(
                 R.id.action_userJobsFragment_to_newJobFragment,
-                bundleOf("userId" to appAuth.state.value.id)
+                bundleOf("userId" to appAuth.state.replayCache.last().id)
             )
 
         }

@@ -7,6 +7,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
+import retrofit2.Response
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.*
 import ru.netology.workmeet.db.AppDb
@@ -16,6 +17,7 @@ import ru.netology.workmeet.entity.UserEntity
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -120,23 +122,21 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     suspend fun upload(upload: MediaUpload): Media {
-        try {
 
+        try {
             val media = upload.inputStream?.readBytes()
-                ?.toRequestBody("multipart/form-data".toMediaType())?.let {
+                ?.toRequestBody("multipart/form-data".toMediaType()).let {
                     MultipartBody.Part.createFormData(
                         "file",
                         upload.name,
-                        it
+                        it ?: upload.name.toRequestBody()
                     )
                 }
-            val response = media?.let { apiService.upload(it) }
-            if (response != null) {
-                if (!response.isSuccessful) {
-                    throw ApiError(response.code(), response.message())
-                }
+            val response = apiService.upload(media)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
             }
-            return response!!.body() ?: throw ApiError(response.code(), response.message())
+            return response.body() ?: throw ApiError(response.code(), response.message())
 
         } catch (e: java.io.IOException) {
             throw NetworkError
@@ -158,7 +158,9 @@ class PostRepositoryImpl @Inject constructor(
                             AttachmentType.IMAGE
                         )
                     )
-                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(".ogg") -> {
+                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(
+                        ".ogg"
+                    ) -> {
                         post.copy(attachment = Attachment(it.url, AttachmentType.AUDIO))
                     }
                     it.url.contains(".mp4") -> post.copy(

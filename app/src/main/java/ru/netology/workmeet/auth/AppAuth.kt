@@ -1,13 +1,17 @@
 package ru.netology.workmeet.auth
 
 import android.content.Context
+import androidx.lifecycle.LifecycleCoroutineScope
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.ViewModelLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -18,7 +22,11 @@ import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Scope
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.coroutineContext
 
 @Singleton
 class AppAuth @Inject constructor(
@@ -46,6 +54,8 @@ class AppAuth @Inject constructor(
     }
 
     val state = _state.asStateFlow()
+
+
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint

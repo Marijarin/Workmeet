@@ -10,9 +10,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
@@ -45,14 +43,17 @@ open class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : ViewModel() {
+
     private val cached = repository
         .data
         .cachedIn(viewModelScope)
 
-    protected val mediaObserver = MediaLifecycleObserver()
+    private val mediaObserver = MediaLifecycleObserver()
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: Flow<PagingData<FeedItem>> = appAuth.state.flatMapLatest { (myId, _) ->
+    val data: Flow<PagingData<FeedItem>> = appAuth.state
+        .flatMapLatest { (myId, _) ->
         cached.map { pagingData ->
             pagingData.map { post ->
                 if (post is Post) {

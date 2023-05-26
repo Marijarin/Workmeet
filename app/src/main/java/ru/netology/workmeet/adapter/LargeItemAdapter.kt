@@ -117,6 +117,7 @@ class PostViewHolder(
                 if (post.attachment != null) {
                     when (post.attachment.typeA) {
                         AttachmentType.IMAGE -> {
+                            attachment.visibility = View.VISIBLE
                             Glide.with(attachment)
                                 .load(post.attachment.url)
                                 .placeholder(R.drawable.baseline_attachment_24)
@@ -233,7 +234,6 @@ class EventViewHolder(
         val childAdapter = UserPreviewAdapter(
             event.users
         )
-
         binding.apply {
             author.text = event.author
             authorJob.text = event.authorJob ?: itemView.context.getText(R.string.default_job)
@@ -242,6 +242,11 @@ class EventViewHolder(
             content.text = event.content
             speakersPreview.adapter = childAdapter
             participantsPreview.adapter = childAdapter
+            attachmentContainer.isVisible = event.attachment != null
+            attachment.visibility = View.GONE
+            video.visibility = View.GONE
+            pause.visibility = View.GONE
+            play.visibility = View.GONE
             when (event.authorAvatar) {
                 null -> Glide.with(avatar)
                     .load(R.drawable.avatar3)
@@ -261,6 +266,7 @@ class EventViewHolder(
                 if (event.attachment != null) {
                     when (event.attachment.typeA) {
                         AttachmentType.IMAGE -> {
+                            attachment.visibility = View.VISIBLE
                             Glide.with(attachment)
                                 .load(event.attachment.url)
                                 .placeholder(R.drawable.baseline_attachment_24)

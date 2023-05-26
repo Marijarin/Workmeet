@@ -73,6 +73,7 @@ class WallViewHolder(
                 if (post.attachment != null) {
                     when (post.attachment.typeA) {
                         AttachmentType.IMAGE -> {
+                            attachment.visibility = View.VISIBLE
                             Glide.with(attachment)
                                 .load(post.attachment.url)
                                 .placeholder(R.drawable.baseline_attachment_24)
@@ -163,9 +164,9 @@ class WallViewHolder(
                 }.show()
             }
             like.setOnClickListener {
-                if (appAuth.state.value.id != 0L) {
+                if (appAuth.state.replayCache.last().id != 0L) {
                     onInteractionListener.onLike(post)
-                } else if (appAuth.state.value.id == 0L) {
+                } else if (appAuth.state.replayCache.last().id == 0L) {
                     like.isChecked = false
                     like.isEnabled = false
                     onInteractionListener.onAuth()

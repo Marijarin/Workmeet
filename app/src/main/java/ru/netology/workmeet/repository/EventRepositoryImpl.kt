@@ -3,8 +3,9 @@ package ru.netology.workmeet.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.EventDao
@@ -15,7 +16,6 @@ import ru.netology.workmeet.entity.EventEntity
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
-import java.io.File
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
@@ -26,7 +26,7 @@ class EventRepositoryImpl @Inject constructor(
 ) : EventRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
-        config = PagingConfig(pageSize = 10),
+        config = PagingConfig(pageSize = 5),
         remoteMediator = EventRemoteMediator(apiService, appDb, eventDao, eventRemoteKeyDao),
         pagingSourceFactory = eventDao::pagingSource
     ).flow.map { pagingData ->
@@ -102,20 +102,7 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun save(event: Event) {
-        try {
-            val response = apiService.saveE(event)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val newEvent = response.body() ?: throw ApiError(response.code(), response.message())
-            eventDao.insert(EventEntity.fromDto(newEvent))
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw WhoKnowsError
-        }
-    }
+
     override suspend fun removeById(id: Long) {
         try {
             val response = apiService.removeByIdE(id)
@@ -129,33 +116,63 @@ class EventRepositoryImpl @Inject constructor(
             throw WhoKnowsError
         }
     }
-    private suspend fun upload(file: File): Media {
+    suspend fun upload(upload: MediaUpload): Media {
         try {
-            val data = MultipartBody.Part.createFormData(
-                "file",
-                file.name,
-                file.asRequestBody()
-            )
-            val response = apiService.upload(data)
+            val media = upload.inputStream?.readBytes()
+                ?.toRequestBody("multipart/form-data".toMediaType()).let {
+                    MultipartBody.Part.createFormData(
+                        "file",
+                        upload.name,
+                        it ?: upload.name.toRequestBody()
+                    )
+                }
+            val response = apiService.upload(media)
+
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             return response.body() ?: throw ApiError(response.code(), response.message())
-        } catch (e: IOException) {
+
+        } catch (e: java.io.IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw WhoKnowsError
         }
     }
 
-    override suspend fun saveWithAttachment(event: Event, file: File, type: AttachmentType) {
+
+    override suspend fun save(event: Event, upload: MediaUpload?) {
         try {
-            val upload = upload(file)
-            val eventWithAttachment = event.copy(
-                //attachment = Attachment(upload.id, type)
-                )
-            save(eventWithAttachment)
-        } catch (e: IOException) {
+            val eventWithAttachment = upload?.let {
+                upload(it)
+            }?.let {
+                when {
+                    it.url.contains(".png") || it.url.contains(".jpeg") -> event.copy(
+                        attachment = Attachment(
+                            it.url,
+                            AttachmentType.IMAGE
+                        ), ownedByMe = true
+                    )
+                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(".ogg") -> {
+                        event.copy(attachment = Attachment(it.url, AttachmentType.AUDIO), ownedByMe = true)
+                    }
+                    it.url.contains(".mp4") -> event.copy(
+                        attachment = Attachment(
+                            it.url,
+                            AttachmentType.VIDEO
+                        )
+                    )
+                    else -> event.copy(attachment = null, ownedByMe = true)
+                }
+            }
+            val response = apiService.saveE(eventWithAttachment ?: event)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            eventDao.insert(EventEntity.fromDto(body))
+        } catch (e: java.io.IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw WhoKnowsError

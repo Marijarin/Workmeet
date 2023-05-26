@@ -17,7 +17,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.netology.workmeet.R
 import ru.netology.workmeet.adapter.ItemLoadingStateAdapter
 import ru.netology.workmeet.adapter.OnInteractionListener
@@ -50,7 +54,6 @@ class WallFragment : Fragment() {
         val post = arguments?.textArg?.let { postFromJson(it) }
 
 
-
         val alertDialog: AlertDialog? = activity?.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
@@ -68,7 +71,7 @@ class WallFragment : Fragment() {
 
         val adapter = WallAdapter(object : OnInteractionListener {
             override fun onEdit(item: FeedItem) {
-                if (item is Post && item.authorId == appAuth.state.value.id)
+                if (item is Post && item.authorId == appAuth.state.replayCache.last().id)
                     viewModel.edit(item)
                 else return
             }
@@ -101,58 +104,48 @@ class WallFragment : Fragment() {
             }
         )
 
-
         lifecycleScope.launchWhenCreated {
-            if (post!=null ) {
+            if (post != null) {
+                viewModel.getUserById(post.authorId)
                 viewModel.setUserId(post.authorId)
+                viewModel.uData.collectLatest(adapter::submitData)
+
+            } else {
+                viewModel.getUserById(appAuth.state.value.id)
+                viewModel.setUserId(appAuth.state.value.id)
+                viewModel.myData.collectLatest(adapter::submitData)
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.user.collectLatest {
                 binding.apply {
-                    when (post.authorAvatar) {
+                    when (it.avatar) {
                         null -> Glide.with(avatar)
                             .load(R.drawable.avatar3)
                             .circleCrop()
                             .error(R.drawable.twotone_error_outline_24)
                             .into(avatar)
                         else -> Glide.with(avatar)
-                            .load("${post.authorAvatar}")
+                            .load("${it.avatar}")
                             .circleCrop()
                             .placeholder(R.drawable.avatar3)
                             .error(R.drawable.twotone_error_outline_24)
                             .timeout(10_000)
                             .into(avatar)
                     }
-                    author.text = post.author
-                    authorJob.text = post.authorJob
+                    author.text = it.name
+                    authorJob.text = post?.authorJob
                 }
-                viewModel.uData.collectLatest(adapter::submitData)
-            } else {
-                viewModel.getUserById(appAuth.state.value.id)
-                viewModel.setUserId(appAuth.state.value.id)
-                viewModel.user.collectLatest {
-                    binding.apply {
-                        when (it.avatar) {
-                            null -> Glide.with(avatar)
-                                .load(R.drawable.avatar3)
-                                .circleCrop()
-                                .error(R.drawable.twotone_error_outline_24)
-                                .into(avatar)
-                            else -> Glide.with(avatar)
-                                .load("${it.avatar}")
-                                .circleCrop()
-                                .placeholder(R.drawable.avatar3)
-                                .error(R.drawable.twotone_error_outline_24)
-                                .timeout(10_000)
-                                .into(avatar)
-                        }
-                        author.text = it.name
-                    }
-                }
-                viewModel.myData.collectLatest (adapter::submitData)
             }
         }
 
+
+
         authViewModel.data.observe(viewLifecycleOwner) {
-            if (authViewModel.authenticated) {
-                adapter.refresh()
+            setFragmentResultListener("signInClosed") { _, _ ->
+                if (authViewModel.authenticated) {
+                    adapter.refresh()
+                }
             }
         }
 
@@ -179,16 +172,22 @@ class WallFragment : Fragment() {
             if (!authViewModel.authenticated) {
                 alertDialog?.show()
             } else if (authViewModel.authenticated) {
-                findNavController().navigate(R.id.action_wallFragment_to_userJobsFragment, bundleOf( "userId" to viewModel.userId.value))
+                findNavController().navigate(
+                    R.id.action_wallFragment_to_userJobsFragment,
+                    bundleOf("userId" to viewModel.userId.value)
+                )
             }
             setFragmentResultListener("signInClosed") { _, _ ->
                 if (authViewModel.authenticated) {
-                    findNavController().navigate(R.id.action_wallFragment_to_userJobsFragment, bundleOf( "userId" to viewModel.userId.value))
+                    findNavController().navigate(
+                        R.id.action_wallFragment_to_userJobsFragment,
+                        bundleOf("userId" to viewModel.userId.value)
+                    )
                 }
             }
         }
 
-        if (viewModel.userId.value!=appAuth.state.value.id){
+        if (viewModel.userId.value != appAuth.state.value.id) {
             binding.fabW.visibility = View.GONE
             binding.message.visibility = View.VISIBLE
             binding.invite.visibility = View.VISIBLE

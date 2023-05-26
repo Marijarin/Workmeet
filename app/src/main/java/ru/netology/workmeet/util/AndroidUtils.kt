@@ -18,7 +18,7 @@ object AndroidUtils {
         return formatter.format(parser.parse(published) ?: "")
     }
     fun toDateFromLong(date: Long): String {
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+        return SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(date)
     }
     fun dateForServer(date: Long): String{
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())

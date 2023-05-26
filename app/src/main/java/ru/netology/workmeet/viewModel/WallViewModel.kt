@@ -54,9 +54,6 @@ class WallViewModel @Inject constructor(
         }
     }
 
-
-
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val uData: Flow<PagingData<Post>> = userId.flatMapLatest {
         repository.loadUserWall(it, repository.getDb(), repository.getRK())
@@ -64,7 +61,8 @@ class WallViewModel @Inject constructor(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val myData: Flow<PagingData<Post>> = appAuth.state.flatMapLatest { (myId, _) ->
+    val myData: Flow<PagingData<Post>> = appAuth.state
+        .flatMapLatest { (myId, _) ->
         repository.loadMyWall(myId, repository.getDb(), repository.getMyRK())
     }.cachedIn(viewModelScope)
         .map {pagingData ->
