@@ -237,7 +237,7 @@ class EventViewHolder(
         binding.apply {
             author.text = event.author
             authorJob.text = event.authorJob ?: itemView.context.getText(R.string.default_job)
-            datetime.text = event.datetime
+            datetime.text = toDate(event.datetime)
             type.text = event.type.name
             content.text = event.content
             speakersPreview.adapter = childAdapter

@@ -67,9 +67,6 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             container,
             false
         )
-
-
-
         fragmentBinding = binding
         binding.edit.requestFocus()
 
@@ -84,9 +81,11 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         }
         binding.datetime.setOnClickListener {
             getDateTimeCalendar()
-            DatePickerDialog(requireContext(), this, year, month, day).show()
+            val dialog = DatePickerDialog(requireContext(), this, year, month, day)
+            dialog.show()
+            binding.datetimeText.text = dateString
         }
-        binding.datetimeText.text = ""
+
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -241,10 +240,9 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         myHour = hourOfDay
         myMinute = minute
-        dateString = "$myDay +.+ $myMonth +.+ $myYear +  + $myHour+:+$myMinute"
+        dateString = "$myDay.${myMonth+1}.$myYear $myHour:$myMinute"
         val calendar = Calendar.getInstance()
         calendar.set(myYear, myMonth, myDay, myHour, myMinute)
         date = calendar.timeInMillis
-
     }
 }
