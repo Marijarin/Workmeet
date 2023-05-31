@@ -12,10 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
-import ru.netology.workmeet.dto.AttachmentType
-import ru.netology.workmeet.dto.MediaUpload
-import ru.netology.workmeet.dto.Post
-import ru.netology.workmeet.dto.User
+import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
 import ru.netology.workmeet.model.MediaModel
 import ru.netology.workmeet.repository.PostRepository
@@ -47,6 +44,7 @@ class WallViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : PostViewModel(repository, appAuth) {
+   var usersLastJob = "job is not defined"
     val userId = MutableStateFlow(0L)
     fun setUserId(id: Long) {
         userId.run {
@@ -74,13 +72,6 @@ class WallViewModel @Inject constructor(
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
 
-    private val _media = MutableLiveData(noMedia)
-
-    private val _upload = MutableLiveData<MediaUpload>()
-
-    private val _postCreated = SingleLiveEvent<Unit>()
-
-
     private val _user = MutableStateFlow(typical)
     val user: Flow<User>
         get() = _user
@@ -95,6 +86,16 @@ class WallViewModel @Inject constructor(
             _user.value = repository.getUserById(userId)
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
+            _dataState.value = FeedModelState.Error
+        }
+    }
+
+    fun takeUsersLastJob(userId: Long) = viewModelScope.launch {
+        try{
+            _dataState.value = FeedModelState.Refreshing
+            usersLastJob = repository.getUsersLastJob(userId).name
+            _dataState.value = FeedModelState.Idle
+        }catch (e: Exception) {
             _dataState.value = FeedModelState.Error
         }
     }

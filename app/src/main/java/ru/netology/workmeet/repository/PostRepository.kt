@@ -13,7 +13,7 @@ import java.io.InputStream
 
 interface PostRepository {
 
-   val data: Flow<PagingData<FeedItem>>
+    val data: Flow<PagingData<FeedItem>>
     fun loadUserWall(
         authorId: Long,
         appDb: AppDb,
@@ -25,6 +25,7 @@ interface PostRepository {
         appDb: AppDb,
         myWallRemoteKeyDao: MyWallRemoteKeyDao
     ): Flow<PagingData<Post>>
+
     fun getDb(): AppDb
 
     fun getRK(): WallRemoteKeyDao
@@ -35,7 +36,7 @@ interface PostRepository {
     suspend fun unlikeById(id: Long)
     suspend fun removeById(id: Long)
     suspend fun save(post: Post, upload: MediaUpload?)
-
+    suspend fun getUsersLastJob(userId: Long): Job
     suspend fun getUserById(userId: Long): User
 
 }

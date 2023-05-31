@@ -118,12 +118,13 @@ class EventRepositoryImpl @Inject constructor(
     }
     suspend fun upload(upload: MediaUpload): Media {
         try {
+            val name = upload.uri?.pathSegments?.last()?.substringAfterLast('/')
             val media = upload.inputStream?.readBytes()
                 ?.toRequestBody("multipart/form-data".toMediaType()).let {
                     MultipartBody.Part.createFormData(
                         "file",
-                        upload.name,
-                        it ?: upload.name.toRequestBody()
+                        name,
+                        it ?: upload.uri.toString().toRequestBody()
                     )
                 }
             val response = apiService.upload(media)
@@ -146,24 +147,25 @@ class EventRepositoryImpl @Inject constructor(
             val eventWithAttachment = upload?.let {
                 upload(it)
             }?.let {
-                when {
-                    it.url.contains(".png") || it.url.contains(".jpeg") -> event.copy(
-                        attachment = Attachment(
-                            it.url,
-                            AttachmentType.IMAGE
-                        ), ownedByMe = true
-                    )
-                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(".ogg") -> {
-                        event.copy(attachment = Attachment(it.url, AttachmentType.AUDIO), ownedByMe = true)
-                    }
-                    it.url.contains(".mp4") -> event.copy(
-                        attachment = Attachment(
-                            it.url,
-                            AttachmentType.VIDEO
+                 when (upload.uploadType) {
+                        "image/*" -> event.copy(
+                            attachment = Attachment(
+                                it.url,
+                                AttachmentType.IMAGE
+                            )
                         )
-                    )
-                    else -> event.copy(attachment = null, ownedByMe = true)
-                }
+
+                        "audio/*" -> {
+                            event.copy(attachment = Attachment(it.url, AttachmentType.AUDIO))
+                        }
+                        "video/*" -> event.copy(
+                            attachment = Attachment(
+                                it.url,
+                                AttachmentType.VIDEO
+                            )
+                        )
+                        else -> event.copy(attachment = null)
+                    }
             }
             val response = apiService.saveE(eventWithAttachment ?: event)
             if (!response.isSuccessful) {

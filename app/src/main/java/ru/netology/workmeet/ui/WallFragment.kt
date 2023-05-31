@@ -50,9 +50,7 @@ class WallFragment : Fragment() {
 
         val binding = FragmentWallBinding.inflate(inflater, container, false)
 
-        fun postFromJson(json: String) = Gson().fromJson(json, Post::class.java)
-        val post = arguments?.textArg?.let { postFromJson(it) }
-
+        val userId = arguments?.getLong("userId")
 
         val alertDialog: AlertDialog? = activity?.let {
             val builder = AlertDialog.Builder(it)
@@ -71,7 +69,7 @@ class WallFragment : Fragment() {
 
         val adapter = WallAdapter(object : OnInteractionListener {
             override fun onEdit(item: FeedItem) {
-                if (item is Post && item.authorId == appAuth.state.replayCache.last().id)
+                if (item is Post && item.authorId == appAuth.state.value.id)
                     viewModel.edit(item)
                 else return
             }
@@ -89,7 +87,14 @@ class WallFragment : Fragment() {
                     viewModel.removeById(item.id)
                 else return
             }
-
+            override fun onAvatar(userId: Long) {
+                if (authViewModel.authenticated) {
+                    findNavController().navigate(
+                        R.id.action_eventFeedFragment_to_wallFragment,
+                        bundleOf("userId" to userId)
+                    )
+                } else alertDialog?.show()
+            }
             override fun onAuth() {
                 alertDialog?.show()
             }
@@ -105,15 +110,17 @@ class WallFragment : Fragment() {
         )
 
         lifecycleScope.launchWhenCreated {
-            if (post != null) {
-                viewModel.getUserById(post.authorId)
-                viewModel.setUserId(post.authorId)
+            if (userId != null) {
+                viewModel.getUserById(userId)
+                viewModel.setUserId(userId)
                 viewModel.uData.collectLatest(adapter::submitData)
+                viewModel.takeUsersLastJob(userId)
 
             } else {
                 viewModel.getUserById(appAuth.state.value.id)
                 viewModel.setUserId(appAuth.state.value.id)
                 viewModel.myData.collectLatest(adapter::submitData)
+                viewModel.takeUsersLastJob(appAuth.state.value.id)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -134,15 +141,14 @@ class WallFragment : Fragment() {
                             .into(avatar)
                     }
                     author.text = it.name
-                    authorJob.text = post?.authorJob
+                    authorJob.text = viewModel.usersLastJob
                 }
             }
         }
 
+        setFragmentResultListener("signInClosed") { _, _ ->
+            authViewModel.data.observe(viewLifecycleOwner) {
 
-
-        authViewModel.data.observe(viewLifecycleOwner) {
-            setFragmentResultListener("signInClosed") { _, _ ->
                 if (authViewModel.authenticated) {
                     adapter.refresh()
                 }

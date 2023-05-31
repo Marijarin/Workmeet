@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
@@ -33,9 +34,9 @@ private val empty = Post(
     link = null
 )
 
-private val noMedia = MediaModel(null, null)
 
-private  val noUpload = MediaUpload(null, " ")
+
+private  val noUpload = MediaUpload(null, null, null)
 
 
 @HiltViewModel
@@ -66,10 +67,6 @@ open class PostViewModel @Inject constructor(
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-
-    private val _media = MutableLiveData(noMedia)
-    val media: LiveData<MediaModel>
-        get() = _media
 
     private val _upload = MutableLiveData(noUpload)
     val upload: LiveData<MediaUpload>
@@ -106,9 +103,7 @@ open class PostViewModel @Inject constructor(
 
             }
             edited.value = empty
-            _media.value = noMedia
             _upload.value = noUpload
-
         }
 
     fun edit(post: Post) {
@@ -153,13 +148,10 @@ open class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeAttachment(uri: Uri?, file: File?) {
-        _media.value = MediaModel(uri, file)
-    }
 
-    fun changeFile(uri: Uri, inputStream: InputStream){
-        val name = uri.pathSegments.last().substringAfterLast('/')
-        _upload.value = MediaUpload(inputStream, name)
+    fun changeFile(type: String?, inputStream: InputStream?, uri: Uri?){
+        if (type!=null)
+            _upload.value = MediaUpload(uri, inputStream, type)
     }
 
 

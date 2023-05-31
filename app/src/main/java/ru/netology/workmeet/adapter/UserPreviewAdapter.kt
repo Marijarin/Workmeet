@@ -9,23 +9,25 @@ import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.CardUserPreviewBinding
 import ru.netology.workmeet.dto.UserPreview
 
+interface OnUserListener {
+    fun onAvatar(userPreview: UserPreview) {}
+}
 
 class UserPreviewAdapter(
     usersData: Map<String, UserPreview>,
-
-
-) : RecyclerView.Adapter<UserPreviewViewHolder>() {
+    private val onUserListener: OnUserListener
+    ) : RecyclerView.Adapter<UserPreviewViewHolder>() {
 
     private var usersList: List<UserPreview> = emptyList()
 
-    init{
+    init {
         this.usersList = usersData.values.toList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserPreviewViewHolder {
         val binding =
             CardUserPreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return UserPreviewViewHolder(binding)
+        return UserPreviewViewHolder(binding, onUserListener)
     }
 
     override fun getItemCount(): Int = usersList.size
@@ -40,9 +42,8 @@ class UserPreviewAdapter(
 
 class UserPreviewViewHolder(
     private val binding: CardUserPreviewBinding,
-
-
-) : RecyclerView.ViewHolder(binding.root) {
+    private val onUserListener: OnUserListener
+    ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(userPreview: UserPreview) {
         binding.apply {
             when (userPreview.avatar) {
@@ -60,10 +61,9 @@ class UserPreviewViewHolder(
                     .into(avatar)
             }
             avatar.setOnClickListener {
-                //onInteractionListener.onUser()
+                onUserListener.onAvatar(userPreview)
             }
             name.text = userPreview.name
-            name.isFocused != name.isGone
         }
     }
 }

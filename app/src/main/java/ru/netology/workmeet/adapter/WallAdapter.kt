@@ -17,6 +17,7 @@ import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.UserCardPostBinding
 import ru.netology.workmeet.dto.AttachmentType
 import ru.netology.workmeet.dto.Post
+import ru.netology.workmeet.dto.UserPreview
 import ru.netology.workmeet.util.AndroidUtils.toDate
 
 class WallAdapter(
@@ -52,7 +53,16 @@ class WallViewHolder(
     fun bind(post: Post) {
 
         val childAdapter = UserPreviewAdapter(
-            post.users
+            post.users, object: OnUserListener {
+                override fun onAvatar(userPreview: UserPreview) {
+                    val userId = post.users
+                        .filterValues { it == userPreview }
+                        .keys
+                        .first()
+                        .toLong()
+                    onInteractionListener.onAvatar(userId)
+                }
+            }
         )
 
         binding.apply {

@@ -17,10 +17,7 @@ import ru.netology.workmeet.R
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.databinding.CardEventBinding
 import ru.netology.workmeet.databinding.CardPostBinding
-import ru.netology.workmeet.dto.AttachmentType
-import ru.netology.workmeet.dto.Event
-import ru.netology.workmeet.dto.FeedItem
-import ru.netology.workmeet.dto.Post
+import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.util.AndroidUtils.toDate
 
 
@@ -29,7 +26,7 @@ interface OnInteractionListener {
     fun onEdit(item: FeedItem) {}
     fun onRemove(item: FeedItem) {}
     fun onAuth() {}
-    fun onUser(item: FeedItem) {}
+    fun onAvatar(userId:Long){}
     fun onPlay(item: FeedItem) {}
     fun onPause() {}
 }
@@ -68,19 +65,25 @@ class LargeItemAdapter(
         }
     }
 }
-
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
 
-
-
     fun bind(post: Post) {
 
         val childAdapter = UserPreviewAdapter(
-            post.users
+            post.users, object: OnUserListener{
+                override fun onAvatar(userPreview: UserPreview) {
+                    val userId = post.users
+                        .filterValues { it == userPreview }
+                        .keys
+                        .first()
+                        .toLong()
+                    onInteractionListener.onAvatar(userId)
+                }
+            }
         )
 
         binding.apply {
@@ -150,7 +153,6 @@ class PostViewHolder(
                     }
                 }
             }
-
             play.setOnClickListener {
                 play.visibility = View.GONE
 
@@ -217,13 +219,12 @@ class PostViewHolder(
                 }
             }
             avatar.setOnClickListener {
-                onInteractionListener.onUser(post)
+                onInteractionListener.onAvatar(post.authorId)
             }
 
         }
     }
 }
-
 class EventViewHolder(
     private val binding: CardEventBinding,
     private val onInteractionListener: OnInteractionListener,
@@ -232,7 +233,16 @@ class EventViewHolder(
 
     fun bind(event: Event) {
         val childAdapter = UserPreviewAdapter(
-            event.users
+            event.users, object: OnUserListener {
+                override fun onAvatar(userPreview: UserPreview) {
+                    val userId = event.users
+                        .filterValues { it == userPreview }
+                        .keys
+                        .first()
+                        .toLong()
+                    onInteractionListener.onAvatar(userId)
+                }
+            }
         )
         binding.apply {
             author.text = event.author
@@ -366,7 +376,7 @@ class EventViewHolder(
                 }
             }
             avatar.setOnClickListener {
-                onInteractionListener.onUser(event)
+                onInteractionListener.onAvatar(event.authorId)
             }
 
         }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -63,7 +64,7 @@ class PostFeedFragment : Fragment() {
         val adapter = LargeItemAdapter(object : OnInteractionListener {
             override fun onEdit(item: FeedItem) {
                 if (item is Post && item.authorId == appAuth.state.value.id)
-                viewModel.edit(item)
+                    viewModel.edit(item)
                 else return
             }
 
@@ -77,7 +78,7 @@ class PostFeedFragment : Fragment() {
 
             override fun onRemove(item: FeedItem) {
                 if (item is Post && item.authorId == appAuth.state.value.id)
-                viewModel.removeById(item.id)
+                    viewModel.removeById(item.id)
                 else return
             }
 
@@ -85,12 +86,13 @@ class PostFeedFragment : Fragment() {
                 alertDialog?.show()
             }
 
-            override fun onUser(item: FeedItem) {
-                if (item is Post && authViewModel.authenticated) {
-                    val json = postToJson(item)
-                    findNavController( ).navigate(R.id.action_postFeedFragment_to_wallFragment,
-                        Bundle().apply { textArg = json })
-                } else  alertDialog?.show()
+            override fun onAvatar(userId: Long) {
+                if (authViewModel.authenticated) {
+                    findNavController().navigate(
+                        R.id.action_postFeedFragment_to_wallFragment,
+                        bundleOf("userId" to userId)
+                    )
+                } else alertDialog?.show()
             }
 
             override fun onPlay(item: FeedItem) {
@@ -100,8 +102,6 @@ class PostFeedFragment : Fragment() {
             override fun onPause() {
                 viewModel.pause()
             }
-
-
         }, appAuth)
 
 
@@ -118,9 +118,9 @@ class PostFeedFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest(adapter::submitData)
         }
+        setFragmentResultListener("signInClosed") { _, _ ->
+            authViewModel.data.observe(viewLifecycleOwner) {
 
-        authViewModel.data.observe(viewLifecycleOwner) {
-            setFragmentResultListener("signInClosed") { _, _ ->
                 if (authViewModel.authenticated) {
                     adapter.refresh()
                 }
@@ -151,14 +151,14 @@ class PostFeedFragment : Fragment() {
             if (!authViewModel.authenticated) {
                 alertDialog?.show()
             } else if (authViewModel.authenticated) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
-        }
+                findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+            }
             setFragmentResultListener("signInClosed") { _, _ ->
                 if (authViewModel.authenticated) {
                     findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
                 }
             }
         }
-            return binding.root
-        }
+        return binding.root
+    }
 }

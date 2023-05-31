@@ -17,6 +17,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.MediaType.Companion.toMediaType
 import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.FragmentNewPostBinding
 import ru.netology.workmeet.model.FeedModelState
@@ -39,6 +40,7 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        var type: String? = null
         val binding = FragmentNewPostBinding.inflate(
             inflater,
             container,
@@ -61,22 +63,7 @@ class NewPostFragment : Fragment() {
                     }.show()
             }
         }
-        val pickPhotoLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    ImagePicker.RESULT_ERROR -> {
-                        Snackbar.make(
-                            binding.root,
-                            ImagePicker.getError(it.data),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        viewModel.changeAttachment(uri, uri?.toFile())
-                    }
-                }
-            }
+
         val pickMediaLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -92,19 +79,23 @@ class NewPostFragment : Fragment() {
                                 it1
                             )
                         }
-                        if (uri != null && stream!=null) {
-                            viewModel.changeFile(uri, stream)
-
-
-                        }
+                        viewModel.changeFile(uri = uri, type = type, inputStream = stream)
                     }
                 }
+            }
+        binding.pickPhoto.setOnClickListener {
+                val intent = Intent().apply {
+                    action = Intent.ACTION_GET_CONTENT
+                }.setType( "image/*")
+                type = intent.type
+                pickMediaLauncher.launch(intent)
             }
 
         binding.addAudio.setOnClickListener {
             val intent = Intent().apply {
                 action = Intent.ACTION_GET_CONTENT
             }.setType( "audio/*")
+            type = intent.type
             pickMediaLauncher.launch(intent)
         }
 
@@ -112,24 +103,11 @@ class NewPostFragment : Fragment() {
             val intent = Intent().apply {
                 action = Intent.ACTION_GET_CONTENT
             }.setType( "video/*")
+            type = intent.type
             pickMediaLauncher.launch(intent)
         }
 
 
-        binding.pickPhoto.setOnClickListener {
-            ImagePicker.with(this)
-                .galleryOnly()
-                .crop()
-                .compress(2048)
-                .provider(ImageProvider.GALLERY)
-                .galleryMimeTypes(
-                    arrayOf(
-                        "image/png",
-                        "image/jpeg",
-                    )
-                )
-                .createIntent(pickPhotoLauncher::launch)
-        }
 
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
@@ -137,14 +115,14 @@ class NewPostFragment : Fragment() {
                 .crop()
                 .compress(2048)
                 .provider(ImageProvider.CAMERA)
-                .createIntent(pickPhotoLauncher::launch)
+                .createIntent(pickMediaLauncher::launch)
         }
 
         binding.removePhoto.setOnClickListener {
-            viewModel.changeAttachment(null, null)
+            viewModel.changeFile(null, null, null)
         }
 
-        viewModel.media.observe(viewLifecycleOwner) {
+        viewModel.upload.observe(viewLifecycleOwner) {
             binding.photo.setImageURI(it.uri)
             binding.photoContainer.isVisible = it.uri != null
         }
@@ -167,11 +145,9 @@ class NewPostFragment : Fragment() {
                         }
                         true
                     }
-
                     else -> false
                 }
             }
-
         }, viewLifecycleOwner)
 
         return binding.root

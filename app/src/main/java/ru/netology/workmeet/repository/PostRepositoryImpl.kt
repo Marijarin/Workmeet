@@ -3,6 +3,7 @@ package ru.netology.workmeet.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -12,6 +13,7 @@ import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.*
 import ru.netology.workmeet.db.AppDb
 import ru.netology.workmeet.dto.*
+import ru.netology.workmeet.entity.JobEntity
 import ru.netology.workmeet.entity.PostEntity
 import ru.netology.workmeet.entity.UserEntity
 import ru.netology.workmeet.error.ApiError
@@ -26,6 +28,7 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val postDao: PostDao,
     private val userDao: UserDao,
+    private val jobDao: JobDao,
     postRemoteKeyDao: PostRemoteKeyDao,
     private val wallRemoteKeyDao: WallRemoteKeyDao,
     private val myWallRemoteKeyDao: MyWallRemoteKeyDao,
@@ -124,12 +127,13 @@ class PostRepositoryImpl @Inject constructor(
     suspend fun upload(upload: MediaUpload): Media {
 
         try {
+            val name = upload.uri?.pathSegments?.last()?.substringAfterLast('/')
             val media = upload.inputStream?.readBytes()
                 ?.toRequestBody("multipart/form-data".toMediaType()).let {
                     MultipartBody.Part.createFormData(
                         "file",
-                        upload.name,
-                        it ?: upload.name.toRequestBody()
+                        name,
+                        it ?: upload.uri.toString().toRequestBody()
                     )
                 }
             val response = apiService.upload(media)
@@ -151,19 +155,18 @@ class PostRepositoryImpl @Inject constructor(
             val postWithAttachment = upload?.let {
                 upload(it)
             }?.let {
-                when {
-                    it.url.contains(".png") || it.url.contains(".jpeg") -> post.copy(
+                when (upload.uploadType) {
+                    "image/*" -> post.copy(
                         attachment = Attachment(
                             it.url,
                             AttachmentType.IMAGE
                         )
                     )
-                    it.url.contains(".mp3") || it.url.contains(".flac") || it.url.contains(".wav") || it.url.contains(
-                        ".ogg"
-                    ) -> {
+
+                    "audio/*" -> {
                         post.copy(attachment = Attachment(it.url, AttachmentType.AUDIO))
                     }
-                    it.url.contains(".mp4") -> post.copy(
+                    "video/*" -> post.copy(
                         attachment = Attachment(
                             it.url,
                             AttachmentType.VIDEO
@@ -196,6 +199,22 @@ class PostRepositoryImpl @Inject constructor(
             userDao.insert(UserEntity.fromDto(body))
             return body
         } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw WhoKnowsError
+        }
+    }
+
+    override suspend fun getUsersLastJob(userId: Long): Job {
+        try {
+            val response = apiService.getAllJ(userId)
+            if(!response.isSuccessful){
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            jobDao.insert(body.map { JobEntity.fromDto(it, userId) })
+            return body.last()
+        }catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw WhoKnowsError

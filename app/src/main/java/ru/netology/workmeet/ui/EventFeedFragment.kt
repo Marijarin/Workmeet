@@ -86,6 +86,14 @@ import javax.inject.Inject
                 override fun onPause() {
                     viewModel.pause()
                 }
+                override fun onAvatar(userId: Long) {
+                    if (authViewModel.authenticated) {
+                        findNavController().navigate(
+                            R.id.action_eventFeedFragment_to_wallFragment,
+                            bundleOf("userId" to userId)
+                        )
+                    } else alertDialog?.show()
+                }
 
                 override fun onAuth() {
                     alertDialog?.show()
@@ -105,13 +113,15 @@ import javax.inject.Inject
                 viewModel.data.collectLatest(adapter::submitData)
             }
 
-            authViewModel.data.observe(viewLifecycleOwner) {
-                setFragmentResultListener("signInClosed") { _, _ ->
+            setFragmentResultListener("signInClosed") { _, _ ->
+                authViewModel.data.observe(viewLifecycleOwner) {
+
                     if (authViewModel.authenticated) {
                         adapter.refresh()
                     }
                 }
             }
+
 
             viewModel.dataState.observe(viewLifecycleOwner) { state ->
                 binding.progress.isVisible = state is FeedModelState.Loading

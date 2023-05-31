@@ -24,10 +24,9 @@
             tools:srcCompat="@sample/posts.json/data/authorAvatar"/>
         <TextView
             android:id="@+id/name"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/icon_button_min_size"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:layout_marginStart="-16dp"
+            android:maxLines="3"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

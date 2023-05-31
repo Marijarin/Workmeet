@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
@@ -44,7 +45,7 @@ private val empty = Event(
 private val noMedia = MediaModel(null, null)
 
 
-private  val noUpload = MediaUpload(null, " ")
+private  val noUpload = MediaUpload(null, null, null)
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val repository: EventRepository,
@@ -177,9 +178,9 @@ class EventViewModel @Inject constructor(
     fun changePhoto(uri: Uri?, file: File?) {
         _media.value = MediaModel(uri, file)
     }
-    fun changeFile(uri: Uri, inputStream: InputStream){
+    fun changeFile(uri: Uri, inputStream: InputStream?, type: String){
         val name = uri.pathSegments.last().substringAfterLast('/')
-        _upload.value = MediaUpload(inputStream, name)
+        _upload.value = MediaUpload(uri, inputStream, type)
     }
     fun playMedia(event: Event) {
         when (event.attachment?.typeA) {

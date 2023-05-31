@@ -61,7 +61,7 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+var typeAtt: String? = null
         val binding = FragmentNewEventBinding.inflate(
             inflater,
             container,
@@ -83,10 +83,9 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             getDateTimeCalendar()
             val dialog = DatePickerDialog(requireContext(), this, year, month, day)
             dialog.show()
-            binding.datetimeText.text = dateString
         }
 
-        val pickPhotoLauncher =
+       val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
                     ImagePicker.RESULT_ERROR -> {
@@ -117,10 +116,8 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
                                 it1
                             )
                         }
-                        if (uri != null && stream != null) {
-                            viewModel.changeFile(uri, stream)
-
-
+                        if (uri != null && typeAtt != null) {
+                            viewModel.changeFile(uri, stream, typeAtt!!)
                         }
                     }
                 }
@@ -130,6 +127,7 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             val intent = Intent().apply {
                 action = Intent.ACTION_GET_CONTENT
             }.setType("audio/*")
+            typeAtt = intent.type
             pickMediaLauncher.launch(intent)
         }
 
@@ -137,13 +135,17 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             val intent = Intent().apply {
                 action = Intent.ACTION_GET_CONTENT
             }.setType("video/*")
+            typeAtt = intent.type
             pickMediaLauncher.launch(intent)
         }
 
-
-
         binding.pickPhoto.setOnClickListener {
-            ImagePicker.with(this)
+            val intent = Intent().apply {
+                action = Intent.ACTION_GET_CONTENT
+            }.setType("image/*")
+            typeAtt = intent.type
+            pickMediaLauncher.launch(intent)
+            /*ImagePicker.with(this)
                 .galleryOnly()
                 .crop()
                 .compress(2048)
@@ -154,7 +156,7 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
                         "image/jpeg",
                     )
                 )
-                .createIntent(pickPhotoLauncher::launch)
+                .createIntent(pickPhotoLauncher::launch)*/
         }
 
         binding.takePhoto.setOnClickListener {
@@ -174,8 +176,6 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             binding.photo.setImageURI(it.uri)
             binding.photoContainer.isVisible = it.uri != null
         }
-
-
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             type = if (checkedId == R.id.radioOff) {
@@ -244,5 +244,6 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         val calendar = Calendar.getInstance()
         calendar.set(myYear, myMonth, myDay, myHour, myMinute)
         date = calendar.timeInMillis
+        fragmentBinding?.datetimeText?.text = dateString
     }
 }
