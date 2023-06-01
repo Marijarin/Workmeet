@@ -37,14 +37,13 @@ private val typical = User(
     name = "Nouser"
 )
 
-private val noMedia = MediaModel(null, null)
 
 @HiltViewModel
 class WallViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : PostViewModel(repository, appAuth) {
-   var usersLastJob = "job is not defined"
+
     val userId = MutableStateFlow(0L)
     fun setUserId(id: Long) {
         userId.run {
@@ -75,6 +74,9 @@ class WallViewModel @Inject constructor(
     private val _user = MutableStateFlow(typical)
     val user: Flow<User>
         get() = _user
+    private val _userLastCompName = MutableStateFlow("job is not defined")
+    val userLastCompName: Flow<String>
+    get() = _userLastCompName
 
     init {
         loadPosts()
@@ -91,15 +93,12 @@ class WallViewModel @Inject constructor(
     }
 
     fun takeUsersLastJob(userId: Long) = viewModelScope.launch {
-        try{
-            _dataState.value = FeedModelState.Refreshing
-            usersLastJob = repository.getUsersLastJob(userId).name
-            _dataState.value = FeedModelState.Idle
-        }catch (e: Exception) {
-            _dataState.value = FeedModelState.Error
+            try {
+                _dataState.value = FeedModelState.Refreshing
+                _userLastCompName.value = repository.getUsersLastJob(userId).name
+                _dataState.value = FeedModelState.Idle
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState.Error
+            }
         }
-    }
-
-
-
 }

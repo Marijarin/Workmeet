@@ -114,13 +114,10 @@ class WallFragment : Fragment() {
                 viewModel.getUserById(userId)
                 viewModel.setUserId(userId)
                 viewModel.uData.collectLatest(adapter::submitData)
-                viewModel.takeUsersLastJob(userId)
-
             } else {
                 viewModel.getUserById(appAuth.state.value.id)
                 viewModel.setUserId(appAuth.state.value.id)
                 viewModel.myData.collectLatest(adapter::submitData)
-                viewModel.takeUsersLastJob(appAuth.state.value.id)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -141,8 +138,15 @@ class WallFragment : Fragment() {
                             .into(avatar)
                     }
                     author.text = it.name
-                    authorJob.text = viewModel.usersLastJob
                 }
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.userLastCompName.collectLatest {
+                if (userId != null) {
+                    viewModel.takeUsersLastJob(userId)
+                } else  viewModel.takeUsersLastJob(appAuth.state.value.id)
+                binding.apply { authorJob.text = it }
             }
         }
 
