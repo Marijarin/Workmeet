@@ -2,6 +2,7 @@ package ru.netology.workmeet.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.workmeet.dto.Post
 import ru.netology.workmeet.dto.User
 import ru.netology.workmeet.dto.UserPreview
 
@@ -30,3 +31,4 @@ data class UserEntity(
             )
     }
 }
+fun List<User>.toEntity(): List<UserEntity> = map(UserEntity::fromDto)

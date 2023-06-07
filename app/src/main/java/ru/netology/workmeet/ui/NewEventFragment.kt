@@ -6,24 +6,19 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.view.*
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
-import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.workmeet.R
 import ru.netology.workmeet.databinding.FragmentNewEventBinding
@@ -61,7 +56,8 @@ class NewEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-var typeAtt: String? = null
+        var typeAtt: String? = null
+        var mentionedUser: Long? = null
         val binding = FragmentNewEventBinding.inflate(
             inflater,
             container,
@@ -69,6 +65,11 @@ var typeAtt: String? = null
         )
         fragmentBinding = binding
         binding.edit.requestFocus()
+
+        setFragmentResultListener("user selected") { key, bundle ->
+            mentionedUser = bundle.getLong("mentionedId")
+            Snackbar.make(binding.root, key, Snackbar.LENGTH_SHORT).show()
+        }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (state is FeedModelState.Error) {
@@ -85,22 +86,6 @@ var typeAtt: String? = null
             dialog.show()
         }
 
-       val pickPhotoLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    ImagePicker.RESULT_ERROR -> {
-                        Snackbar.make(
-                            binding.root,
-                            ImagePicker.getError(it.data),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        viewModel.changePhoto(uri, uri?.toFile())
-                    }
-                }
-            }
         val pickMediaLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -140,23 +125,18 @@ var typeAtt: String? = null
         }
 
         binding.pickPhoto.setOnClickListener {
-            val intent = Intent().apply {
-                action = Intent.ACTION_GET_CONTENT
-            }.setType("image/*")
-            typeAtt = intent.type
-            pickMediaLauncher.launch(intent)
-            /*ImagePicker.with(this)
+            ImagePicker.with(this)
                 .galleryOnly()
                 .crop()
                 .compress(2048)
                 .provider(ImageProvider.GALLERY)
-                .galleryMimeTypes(
-                    arrayOf(
-                        "image/png",
-                        "image/jpeg",
-                    )
-                )
-                .createIntent(pickPhotoLauncher::launch)*/
+                .createIntent {
+                    it.apply {
+                        action = Intent.ACTION_GET_CONTENT
+                    }.type = "image/*"
+                    typeAtt = it.type
+                    pickMediaLauncher.launch(it)
+                }
         }
 
         binding.takePhoto.setOnClickListener {
@@ -165,7 +145,13 @@ var typeAtt: String? = null
                 .crop()
                 .compress(2048)
                 .provider(ImageProvider.CAMERA)
-                .createIntent(pickPhotoLauncher::launch)
+                .createIntent {
+                    it.apply {
+                        action = Intent.ACTION_GET_CONTENT
+                    }.type = "image/*"
+                    typeAtt = it.type
+                    pickMediaLauncher.launch(it)
+                }
         }
 
         binding.removePhoto.setOnClickListener {
@@ -182,6 +168,9 @@ var typeAtt: String? = null
                 EventType.OFFLINE
             } else EventType.ONLINE
         }
+        binding.addSpeaker.setOnClickListener{
+            findNavController().navigate(R.id.action_newEventFragment_to_allUsersFragment)
+        }
 
         viewModel.eventCreated.observe(viewLifecycleOwner) {
             viewModel.loadEvents()
@@ -196,6 +185,7 @@ var typeAtt: String? = null
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return when (menuItem.itemId) {
                         R.id.save -> {
+                            viewModel.speakUser(mentionedUser)
                             viewModel.changeContent(
                                 content = binding.edit.text.toString(),
                                 type = type,
@@ -234,13 +224,13 @@ var typeAtt: String? = null
         myYear = year
         myMonth = month
         getDateTimeCalendar()
-        TimePickerDialog(requireContext(), this@NewEventFragment, hour, minute,true).show()
+        TimePickerDialog(requireContext(), this@NewEventFragment, hour, minute, true).show()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         myHour = hourOfDay
         myMinute = minute
-        dateString = "$myDay.${myMonth+1}.$myYear $myHour:$myMinute"
+        dateString = "$myDay.${myMonth + 1}.$myYear $myHour:$myMinute"
         val calendar = Calendar.getInstance()
         calendar.set(myYear, myMonth, myDay, myHour, myMinute)
         date = calendar.timeInMillis

@@ -3,12 +3,10 @@ package ru.netology.workmeet.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
-import retrofit2.Response
 import ru.netology.workmeet.api.ApiService
 import ru.netology.workmeet.dao.*
 import ru.netology.workmeet.db.AppDb
@@ -19,7 +17,6 @@ import ru.netology.workmeet.entity.UserEntity
 import ru.netology.workmeet.error.ApiError
 import ru.netology.workmeet.error.NetworkError
 import ru.netology.workmeet.error.WhoKnowsError
-import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -133,7 +130,7 @@ class PostRepositoryImpl @Inject constructor(
                     MultipartBody.Part.createFormData(
                         "file",
                         name,
-                        it ?: upload.uri.toString().toRequestBody()
+                        upload.uri.toString().toRequestBody()
                     )
                 }
             val response = apiService.upload(media)
@@ -152,30 +149,32 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun save(post: Post, upload: MediaUpload?) {
         try {
-            val postWithAttachment = upload?.let {
-                upload(it)
-            }?.let {
-                when (upload.uploadType) {
-                    "image/*" -> post.copy(
-                        attachment = Attachment(
-                            it.url,
-                            AttachmentType.IMAGE
-                        )
-                    )
+            val media = if (upload?.inputStream != null) upload(upload) else null
 
-                    "audio/*" -> {
-                        post.copy(attachment = Attachment(it.url, AttachmentType.AUDIO))
-                    }
-                    "video/*" -> post.copy(
-                        attachment = Attachment(
-                            it.url,
-                            AttachmentType.VIDEO
-                        )
-                    )
-                    else -> post.copy(attachment = null)
-                }
+    val postWithAttachment = when (upload?.uploadType) {
+        "image/*" -> post.copy(
+            attachment = media?.let {
+                Attachment(
+                    it.url,
+                    AttachmentType.IMAGE
+                )
             }
-            val response = apiService.saveP(postWithAttachment ?: post)
+        )
+        "audio/*" -> {
+            post.copy(attachment = media?.let { Attachment(it.url, AttachmentType.AUDIO) })
+        }
+        "video/*" -> post.copy(
+            attachment = media?.let {
+                Attachment(
+                    it.url,
+                    AttachmentType.VIDEO
+                )
+            }
+        )
+        else -> post
+    }
+
+            val response = apiService.saveP(postWithAttachment)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -208,13 +207,13 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getUsersLastJob(userId: Long): Job {
         try {
             val response = apiService.getAllJ(userId)
-            if(!response.isSuccessful){
+            if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             jobDao.insert(body.map { JobEntity.fromDto(it, userId) })
             return body.last()
-        }catch (e: IOException) {
+        } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw WhoKnowsError

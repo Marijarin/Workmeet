@@ -43,5 +43,17 @@
             app:layout_constraintStart_toEndOf="@id/avatar"
             app:layout_constraintTop_toBottomOf="@id/author"
             tools:text="@sample/posts.json/data/authorJob" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pick"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/min_spacing"
+            android:contentDescription="@string/description_pick_user"
+            android:text="@string/pick"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

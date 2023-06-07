@@ -98,7 +98,7 @@ class UserJobsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        if (userId!=appAuth.state.replayCache.last().id){
+        if (userId!=appAuth.state.value.id){
             binding.fabJ.visibility = View.GONE
             binding.message.visibility = View.GONE
             binding.invite.visibility = View.GONE
@@ -107,7 +107,7 @@ class UserJobsFragment : Fragment() {
         binding.fabJ.setOnClickListener {
             findNavController().navigate(
                 R.id.action_userJobsFragment_to_newJobFragment,
-                bundleOf("userId" to appAuth.state.replayCache.last().id)
+                bundleOf("userId" to appAuth.state.value.id)
             )
 
         }

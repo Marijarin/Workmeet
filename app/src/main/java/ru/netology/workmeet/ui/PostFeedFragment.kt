@@ -59,8 +59,6 @@ class PostFeedFragment : Fragment() {
             builder.create()
         }
 
-        fun postToJson(post: Post) = Gson().toJson(post)
-
         val adapter = LargeItemAdapter(object : OnInteractionListener {
             override fun onEdit(item: FeedItem) {
                 if (item is Post && item.authorId == appAuth.state.value.id)
@@ -120,7 +118,6 @@ class PostFeedFragment : Fragment() {
         }
         setFragmentResultListener("signInClosed") { _, _ ->
             authViewModel.data.observe(viewLifecycleOwner) {
-
                 if (authViewModel.authenticated) {
                     adapter.refresh()
                 }

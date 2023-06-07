@@ -63,7 +63,6 @@ class UserPreviewViewHolder(
             avatar.setOnClickListener {
                 onUserListener.onAvatar(userPreview)
             }
-            name.text = userPreview.name
         }
     }
 }

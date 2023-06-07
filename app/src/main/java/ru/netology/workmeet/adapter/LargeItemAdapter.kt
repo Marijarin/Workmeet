@@ -1,6 +1,7 @@
 package ru.netology.workmeet.adapter
 
 
+import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -26,7 +28,7 @@ interface OnInteractionListener {
     fun onEdit(item: FeedItem) {}
     fun onRemove(item: FeedItem) {}
     fun onAuth() {}
-    fun onAvatar(userId:Long){}
+    fun onAvatar(userId: Long) {}
     fun onPlay(item: FeedItem) {}
     fun onPause() {}
 }
@@ -65,6 +67,7 @@ class LargeItemAdapter(
         }
     }
 }
+
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
@@ -73,8 +76,24 @@ class PostViewHolder(
 
     fun bind(post: Post) {
 
-        val childAdapter = UserPreviewAdapter(
-            post.users, object: OnUserListener{
+        val childAdapterLikes = UserPreviewAdapter(
+            post.users.filterKeys {
+                post.likeOwnerIds.contains(it.toLong())
+            }, object : OnUserListener {
+                override fun onAvatar(userPreview: UserPreview) {
+                    val userId = post.users
+                        .filterValues { it == userPreview }
+                        .keys
+                        .first()
+                        .toLong()
+                    onInteractionListener.onAvatar(userId)
+                }
+            }
+        )
+        val childAdapterMentioned = UserPreviewAdapter(
+            post.users.filterKeys {
+                post.mentionIds.contains(it.toLong())
+            }, object : OnUserListener {
                 override fun onAvatar(userPreview: UserPreview) {
                     val userId = post.users
                         .filterValues { it == userPreview }
@@ -98,9 +117,14 @@ class PostViewHolder(
             pause.visibility = View.GONE
             play.visibility = View.GONE
 
-            likeOwners.adapter = childAdapter
+            likeOwners.adapter = childAdapterLikes
+            likeOwners.addItemDecoration(CustomItemDecorator(itemView.context))
             likeOwners.layoutManager =
-                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+               LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+
+
+            mentionedOwners.adapter = childAdapterMentioned
+            mentionedOwners.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
             when (post.authorAvatar) {
                 null -> Glide.with(avatar)
@@ -156,10 +180,10 @@ class PostViewHolder(
             play.setOnClickListener {
                 play.visibility = View.GONE
 
-                if(post.attachment?.typeA == AttachmentType.AUDIO) {
+                if (post.attachment?.typeA == AttachmentType.AUDIO) {
                     pause.visibility = View.VISIBLE
-                    onInteractionListener.onPlay(post) }
-                else if (post.attachment?.typeA == AttachmentType.VIDEO){
+                    onInteractionListener.onPlay(post)
+                } else if (post.attachment?.typeA == AttachmentType.VIDEO) {
                     pause.visibility = View.GONE
                     video.apply {
                         onInteractionListener.onPlay(post)
@@ -182,7 +206,7 @@ class PostViewHolder(
                 onInteractionListener.onPause()
             }
 
-            if(!pause.isFocusable){
+            if (!pause.isFocusable) {
                 pause.visibility = View.GONE
                 play.visibility = View.VISIBLE
             }
@@ -225,6 +249,7 @@ class PostViewHolder(
         }
     }
 }
+
 class EventViewHolder(
     private val binding: CardEventBinding,
     private val onInteractionListener: OnInteractionListener,
@@ -233,7 +258,7 @@ class EventViewHolder(
 
     fun bind(event: Event) {
         val childAdapter = UserPreviewAdapter(
-            event.users, object: OnUserListener {
+            event.users, object : OnUserListener {
                 override fun onAvatar(userPreview: UserPreview) {
                     val userId = event.users
                         .filterValues { it == userPreview }
@@ -313,10 +338,10 @@ class EventViewHolder(
             play.setOnClickListener {
                 play.visibility = View.GONE
 
-                if(event.attachment?.typeA == AttachmentType.AUDIO) {
+                if (event.attachment?.typeA == AttachmentType.AUDIO) {
                     pause.visibility = View.VISIBLE
-                    onInteractionListener.onPlay(event) }
-                else if (event.attachment?.typeA == AttachmentType.VIDEO){
+                    onInteractionListener.onPlay(event)
+                } else if (event.attachment?.typeA == AttachmentType.VIDEO) {
                     pause.visibility = View.GONE
                     video.apply {
                         onInteractionListener.onPlay(event)
@@ -339,7 +364,7 @@ class EventViewHolder(
                 onInteractionListener.onPause()
             }
 
-            if(!pause.isFocusable){
+            if (!pause.isFocusable) {
                 pause.visibility = View.GONE
                 play.visibility = View.VISIBLE
             }

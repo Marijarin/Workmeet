@@ -67,4 +67,6 @@
     <string name="select_datetime">Выберите дату и время</string>
     <string name="offline">ОФЛАЙН</string>
     <string name="online">ОНЛАЙН</string>
+    <string name="pick">Этот</string>
+    <string name="description_pick_user">Выбрать этого пользователя</string>
 </resources>

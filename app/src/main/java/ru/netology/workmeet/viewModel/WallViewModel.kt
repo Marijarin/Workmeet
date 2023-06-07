@@ -1,8 +1,6 @@
 package ru.netology.workmeet.viewModel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -14,27 +12,15 @@ import kotlinx.coroutines.launch
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
-import ru.netology.workmeet.model.MediaModel
 import ru.netology.workmeet.repository.PostRepository
-import ru.netology.workmeet.ui.MediaLifecycleObserver
-import ru.netology.workmeet.util.SingleLiveEvent
 import javax.inject.Inject
 
-private val empty = Post(
-    id = 0,
-    author = " ",
-    authorAvatar = " ",
-    authorJob = null,
-    content = "string",
-    published = "now",
-    link = null,
-    attachment = null
-)
-private val typical = User(
+
+private val nobody = User(
     id = 0,
     avatar = null,
-    login = "nouser",
-    name = "Nouser"
+    login = "nobody",
+    name = "Nobody"
 )
 
 
@@ -71,7 +57,7 @@ class WallViewModel @Inject constructor(
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
 
-    private val _user = MutableStateFlow(typical)
+    private val _user = MutableStateFlow(nobody)
     val user: Flow<User>
         get() = _user
     private val _userLastCompName = MutableStateFlow("job is not defined")

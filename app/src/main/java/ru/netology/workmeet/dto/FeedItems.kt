@@ -65,7 +65,7 @@ data class Job(
     val userId: Long = 0,
 ): FeedItem
 data class User(
-    var id: Long,
+    val id: Long,
     val avatar: String?,
     val login: String,
     val name: String,

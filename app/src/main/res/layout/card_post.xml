@@ -91,6 +91,7 @@
         app:layout_constraintTop_toBottomOf="@id/barrierTop"
         app:layout_constraintBottom_toTopOf="@id/attachmentContainer"
         tools:text="@sample/posts.json/data/content" />
+
     <FrameLayout
         android:id="@+id/attachmentContainer"
         android:layout_width="match_parent"
@@ -174,6 +175,29 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/like"
         app:layout_constraintTop_toBottomOf="@id/barrierBottom"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/card_user_preview" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mentioned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/posts_avatar_size"
+        android:contentDescription="@string/description_post_likes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/like"
+        app:icon="@drawable/baseline_people_alt_24"
+        tools:text="@sample/posts.json/data/likes"
+        style="@style/Widget.Material3.Button.IconButton"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mentionedOwners"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/posts_avatar_size"
+        app:layout_constraintStart_toEndOf="@id/mentioned"
+        app:layout_constraintTop_toBottomOf="@id/like"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/card_user_preview" />
 

@@ -128,6 +128,11 @@ class EventViewModel @Inject constructor(
         }
         edited.value = edited.value?.copy(content = contentE, type = type, datetime = datetimeE)
     }
+    fun speakUser(mentionedUser: Long?) {
+        if (mentionedUser!=null)
+            edited.value = edited.value
+                ?.copy(speakerIds = listOf(mentionedUser))
+    }
     fun likeById(id: Long) = viewModelScope.launch{
         try {
             _dataState.value = FeedModelState.Refreshing

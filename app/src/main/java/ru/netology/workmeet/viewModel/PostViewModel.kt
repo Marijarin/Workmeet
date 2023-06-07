@@ -12,15 +12,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import ru.netology.workmeet.auth.AppAuth
 import ru.netology.workmeet.dto.*
 import ru.netology.workmeet.model.FeedModelState
-import ru.netology.workmeet.model.MediaModel
 import ru.netology.workmeet.repository.PostRepository
 import ru.netology.workmeet.ui.MediaLifecycleObserver
 import ru.netology.workmeet.util.SingleLiveEvent
-import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -33,7 +30,6 @@ private val empty = Post(
     published = "now",
     link = null
 )
-
 
 
 private  val noUpload = MediaUpload(null, null, null)
@@ -50,7 +46,6 @@ open class PostViewModel @Inject constructor(
         .cachedIn(viewModelScope)
 
     private val mediaObserver = MediaLifecycleObserver()
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<FeedItem>> = appAuth.state
@@ -116,6 +111,11 @@ open class PostViewModel @Inject constructor(
             return
         }
         edited.value = edited.value?.copy(content = text)
+    }
+    fun mentionUser(mentionedUser: Long?) {
+        if (mentionedUser!=null)
+            edited.value = edited.value
+                ?.copy(mentionIds = listOf(mentionedUser))
     }
 
     fun likeById(id: Long) = viewModelScope.launch {

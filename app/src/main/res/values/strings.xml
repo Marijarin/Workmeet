@@ -67,4 +67,6 @@
     <string name="select_datetime">Select date and time</string>
     <string name="offline">OFFLINE</string>
     <string name="online">ONLINE</string>
+    <string name="pick">Pick</string>
+    <string name="description_pick_user">Pick user</string>
 </resources>
